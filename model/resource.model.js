@@ -9,10 +9,10 @@ const resourceSchema = new Schema({
     required: true,
   },
   gestor: { type: Schema.Types.ObjectId, ref: "User" },
-  horariosDisponiveis: [
+  availableBookings: [
     { type: String },
   ] /* horários disponíveis para reserva do recurso */,
-  horariosAgendados: [
+  bookedTimes: [
     { type: String },
   ] /* array de horários já agendados naquela data */,
 });
