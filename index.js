@@ -1,5 +1,6 @@
 import express from "express";
 import * as dotenv from "dotenv";
+import userRoute from "./routes/user.routes.js";
 
 //habilitar o servidor a ter variáveis de ambiente
 dotenv.config();
