@@ -11,4 +11,4 @@ const bookingsSchema = new Schema({
   },
 });
 
-const BookingsModel = model("Reservas", bookingsSchema);
+const BookingsModel = model("Bookings", bookingsSchema);

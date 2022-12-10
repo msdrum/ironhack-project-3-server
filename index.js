@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import connect from "./config/db.config.js";
 import userRoute from "./routes/user.routes.js";
 import resourceRoute from "./routes/resource.routes.js";
+import bookingsRoute from "./routes/bookings.routes.js";
 
 //habilitar o servidor a ter variáveis de ambiente
 dotenv.config();
@@ -21,6 +22,7 @@ connect();
 //rotas
 app.use("/user", userRoute);
 app.use("/resource", resourceRoute);
+app.use("/bookings", bookingsRoute);
 
 // o servidor subindo pro ar.
 app.listen(process.env.PORT, () => {
