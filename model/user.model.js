@@ -25,12 +25,12 @@ const userSchema = new Schema(
       default: "USER",
     },
     resources: [{ type: Schema.Types.ObjectId, ref: "Resource" }], //apenas gestor
-    passwordHash: { type: String, required: true },
-    profilePic: { type: String }, //só se tiver tempo
-    confirmEmail: { type: Boolean, default: false },
-    schedule: [
-      { type: Schema.Types.ObjectId, ref: "Resource" },
-    ] /* pegar apenas o horário agendado */,
+    //passwordHash: { type: String, required: true },
+    //profilePic: { type: String }, //só se tiver tempo
+    // confirmEmail: { type: Boolean, default: false },
+    //schedule: [
+    //{ type: Schema.Types.ObjectId, ref: "Resource" },
+    //] /* pegar apenas o horário agendado */,
   },
   {
     timestamps: true,
