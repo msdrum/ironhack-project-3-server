@@ -12,9 +12,6 @@ const resourceSchema = new Schema({
   availableBookings: [
     { type: String },
   ] /* horários disponíveis para reserva do recurso */,
-  bookedTimes: [
-    { type: String },
-  ] /* array de horários já agendados naquela data */,
 });
 
 const ResourceModel = model("Resource", resourceSchema);
