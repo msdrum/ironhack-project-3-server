@@ -28,9 +28,9 @@ const userSchema = new Schema(
     // passwordHash: { type: String, required: true },
     // profilePic: { type: String }, //só se tiver tempo
     // confirmEmail: { type: Boolean, default: false },
-    // schedule: [
-    // { type: Schema.Types.ObjectId, ref: "Resource" },
-    // ] /* pegar apenas o horário agendado */,
+    schedule: [
+      { type: Schema.Types.ObjectId, ref: "Resource" },
+    ] /* pegar apenas o horário agendado */,
   },
   {
     timestamps: true,
