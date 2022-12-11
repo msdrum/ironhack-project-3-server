@@ -28,8 +28,8 @@ const userSchema = new Schema(
     // passwordHash: { type: String, required: true },
     // profilePic: { type: String }, //só se tiver tempo
     // confirmEmail: { type: Boolean, default: false },
-    schedule: [
-      { type: Schema.Types.ObjectId, ref: "Resource" },
+    bookings: [
+      { type: Schema.Types.ObjectId, ref: "Bookings" },
     ] /* pegar apenas o horário agendado */,
   },
   {
