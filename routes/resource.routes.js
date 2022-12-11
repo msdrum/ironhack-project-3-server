@@ -7,7 +7,7 @@ const resourceRoute = express.Router();
 
 //ROUTES
 
-//post create-resource
+//POST create-resource
 
 resourceRoute.post(
   "/create-resource",
