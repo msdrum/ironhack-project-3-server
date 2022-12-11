@@ -22,4 +22,21 @@ userRoute.post("/sign-up", async (req, res) => {
   }
 });
 
+userRoute.get(
+  "/all-users",
+  /*isAuth,
+  isAdmin,
+  attachCurrentUser,*/
+  async (req, res) => {
+    try {
+      const users = await UserModel.find({}, { passwordHash: 0 });
+
+      return res.status(200).json(users);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
 export default userRoute;
