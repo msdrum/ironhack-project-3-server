@@ -28,7 +28,7 @@ const resourceSchema = new Schema({
   {1 08:00}, {1 09:00}, {1 10:00}, {1 11:00},
   {3 08:00}, {3 09:00}, {3 10:00}, {3 11:00}
   sendo que 0= domingo, 1=segunda, 2=terça, 3=quarta, etc..*/
-  availableBookings: [
+  availableBooking: [
     { type: String },
   ] ,
 });

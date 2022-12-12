@@ -42,8 +42,8 @@ const userSchema = new Schema(
     // confirmEmail: { type: Boolean, default: false },
     
     /* referência aos agendamentos realizados pelo usuário */
-    bookings: [
-      { type: Schema.Types.ObjectId, ref: "Bookings" },
+    booking: [
+      { type: Schema.Types.ObjectId, ref: "Booking" },
     ] ,
   },
   {

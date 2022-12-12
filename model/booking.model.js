@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const bookingsSchema = new Schema({
+const bookingSchema = new Schema({
 
   /** referência ao usuário logado que fez a reserv */
   user: {
@@ -33,6 +33,6 @@ const bookingsSchema = new Schema({
   },
 });
 
-const BookingsModel = model("Bookings", bookingsSchema);
+const BookingModel = model("Booking", bookingSchema);
 
-export default BookingsModel;
+export default BookingModel;
