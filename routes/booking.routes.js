@@ -1,5 +1,6 @@
 import express from "express";
 import BookingModel from "../model/booking.model.js";
+import ResourceModel from "../model/resource.model.js";
 
 const bookingRoute = express.Router();
 
