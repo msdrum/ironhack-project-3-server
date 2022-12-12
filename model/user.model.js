@@ -39,7 +39,7 @@ const userSchema = new Schema(
 
     // passwordHash: { type: String, required: true },
     // profilePic: { type: String }, //só se tiver tempo
-    // confirmEmail: { type: Boolean, default: false },
+    confirmEmail: { type: Boolean, default: false },
     
     /* referência aos agendamentos realizados pelo usuário */
     booking: [
