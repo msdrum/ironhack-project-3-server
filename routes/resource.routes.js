@@ -130,6 +130,8 @@ resourceRoute.delete(
   }
 );
 
+//editar-resource
+
 resourceRoute.put(
   "/complete/:idResource",
   isAuth,
