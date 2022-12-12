@@ -1,6 +1,18 @@
 import express from "express";
-import BookingsModel from "../model/bookings.model.js";
+import BookingModel from "../model/booking.model.js";
 
-const bookingsRoute = express.Router();
+const bookingRoute = express.Router();
 
-export default bookingsRoute;
+//ROUTES
+
+//ROTA TESTE para agendamento
+bookingRoute.post("/booking", async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.errors);
+  }
+});
+
+export default bookingRoute;
+  
