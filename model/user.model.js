@@ -43,7 +43,8 @@ const userSchema = new Schema(
     
     /* referência aos agendamentos realizados pelo usuário */
     booking: [
-      { type: Schema.Types.ObjectId, ref: "Booking" },
+      { type: Schema.Types.ObjectId, 
+        ref: "Booking" },
     ] ,
   },
   {
