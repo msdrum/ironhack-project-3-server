@@ -43,7 +43,7 @@ const resourceRoute = express.Router();
 // );
 
 //ROTA TESTE criar um novo Resource e alocá-lo para um gestor.
-resourceRoute.post("/create-resource/:userId", async (req, res) => {
+resourceRoute.post("/create-resource/", async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -51,7 +51,6 @@ resourceRoute.post("/create-resource/:userId", async (req, res) => {
 
     const newResource = await ResourceModel.create({
       ...req.body,
-      gestor: userId,
     });
 
     //Colocar a nova resource no campo resources do usuário (gestor)
@@ -75,6 +74,7 @@ resourceRoute.post("/create-resource/:userId", async (req, res) => {
 //get all-resources
 resourceRoute.get("/all-resources", async (req, res) => {
   try {
+
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);
