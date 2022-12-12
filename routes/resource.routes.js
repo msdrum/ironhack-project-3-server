@@ -1,7 +1,7 @@
 import express from "express";
 import ResourceModel from "../model/resource.model.js";
 import UserModel from "../model/user.model.js";
-import BookingsModel from "../model/bookings.model.js";
+import BookingModel from "../model/booking.model.js";
 
 const resourceRoute = express.Router();
 
