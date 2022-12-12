@@ -2,14 +2,15 @@ import { Schema, model } from "mongoose";
 
 const resourceSchema = new Schema({
   /* tipo do recurso, agrupamento */
-  resourceType: { 
-    type: String, 
-    enum: ["LAB", "INSTRUMENTO","ESTAÇÃO DE TRABALHO", "SALA"], 
-    default: "LAB" },
+  resourceType: {
+    type: String,
+    enum: ["LAB", "INSTRUMENTO", "ESTAÇÃO DE TRABALHO", "SALA"],
+    default: "LAB",
+  },
 
   /* nome do recurso, ex. laboratório 1, sala de reuniões, piano 2, etc */
-  name: { 
-    type: String 
+  name: {
+    type: String,
   },
 
   /* número de controle do recurso, p. ex. número de patrimônio ou tombamento*/
@@ -20,9 +21,10 @@ const resourceSchema = new Schema({
   },
 
   /* id do gestor responsável pelo recurso */
-  gestor: { 
-    type: Schema.Types.ObjectId, 
-    ref: "User" },
+  gestor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 
   /** horários disponíveis para reserva do recurso, por ex. seg e qua de manhã: 
   {1 08:00}, {1 09:00}, {1 10:00}, {1 11:00},
@@ -38,8 +40,9 @@ const resourceSchema = new Schema({
     },
   */
   availableBooking: [
+    //Date?
     { type: String },
-  ] ,
+  ],
 });
 
 const ResourceModel = model("Resource", resourceSchema);
