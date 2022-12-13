@@ -1,0 +1,108 @@
+USERS
+
+
+{
+	"name": "José",
+	"idNumber": "01724",
+	"email": "jose@dev.com",
+	"role": "GESTOR",
+	"resources": [],
+	"booking": []
+}
+
+{
+	"name": "Roberta",
+	"idNumber": "01715",
+	"email": "roberta@dev.com",
+	"role": "GESTOR",
+	"resources": [],
+	"booking": []
+}
+
+
+{
+	"name": "João",
+	"idNumber": "071",
+	"email": "joao@dev.com",
+	"role": "USER",
+	"resources": [],
+	"booking": []
+}
+
+{
+	"name": "Luiza",
+	"idNumber": "7524",
+	"email": "luiza@dev.com",
+	"role": "USER",
+	"resources": [],
+	"booking": []
+}
+
+{
+	"name": "Josefa",
+	"idNumber": "6725",
+	"email": "josefa@dev.com",
+	"role": "USER",
+	"resources": [],
+	"booking": []
+}
+
+{
+	"name": "Vitor",
+	"idNumber": "87213",
+	"email": "vitor@dev.com",
+	"role": "USER",
+	"resources": [],
+	"booking": []
+}
+
+{
+	"name": "Ana",
+	"idNumber": "947105",
+	"email": "ana@dev.com",
+	"role": "USER",
+	"resources": [],
+	"booking": []
+}
+
+
+
+RESOURCES
+
+{
+	"resourceType": "LAB",
+	"name": "Laboratório de Canto",
+	"assessmentNumber": "067",
+	"gestor": "63975ec9f369068244813808",
+	"availableBooking": ["1 8:00", "1 9:00", "1 10:00", "1 11:00", "2 10:00", "2 11:00", "3 10:00", "3 11:00", "3 14:00", "3 15:00", "3 16:00", "4 14:00", "4 15:00", "4 16:00", "4 17:00"]
+	
+}
+
+
+{
+	"resourceType": "INSTRUMENTO",
+	"name": "Piano 1",
+	"assessmentNumber": "023",
+	"gestor": "63975ed5f36906824481380a",
+	"availableBooking": ["1 8:00", "1 9:00", "1 10:00", "2 08:00", "2 09:00", "3 10:00", "3 11:00", "3 14:00", "3 15:00", "3 16:00", "4 14:00", "4 15:00", "4 16:00", "4 17:00"]
+	
+}
+
+
+{
+	"resourceType": "INSTRUMENTO",
+	"name": "Piano 2",
+	"assessmentNumber": "024",
+	"gestor": "63975ed5f36906824481380a",
+	"availableBooking": ["3 10:00", "3 11:00", "3 14:00", "3 15:00", "3 16:00", "4 14:00", "4 15:00", "4 16:00", "4 17:00"]
+	
+}
+
+{
+	"resourceType": "LAB",
+	"name": "Laboratório de Cordas Dedilhadas",
+	"assessmentNumber": "025",
+	"gestor": "63975ec9f369068244813808",
+	"availableBooking": ["3 08:00", "3 09:00", "3 14:00", "3 15:00", "3 16:00", "4 14:00", "4 15:00", "4 16:00", "4 17:00"]
+	
+}
