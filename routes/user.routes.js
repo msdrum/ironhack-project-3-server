@@ -44,7 +44,7 @@ userRouter.post("/signup", async (req, res) => {
 
     const createdUser = await UserModel.create({...req.body, passwordHash: hashedPassword});
 
-    // delete createdUser._doc.passwordHash;
+    delete createdUser._doc.passwordHash;
 
     //const mailOptions = {
     //  from: "turma92wd@hotmail.com", //nosso email
