@@ -190,18 +190,45 @@ bookingRoute.get(
 
 //Reservas dos recursos do gestor
 bookingRoute.get(
-  "/gestor-bookings",
+  "/gestor-bookings/:gestorId",
   /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
     try {
 
+      const { gestorId } = req.params;
 
-      // const { bookingId } = req.params;
-      // const deletedBooking = await BookingModel.findByIdAndDelete(bookingId);
-      // if (!deletedBooking) {
-      //   return res.status(400).json({ msg: "Agendamento não encontrado!" });
-      // }
+      const gestorResources = await ResourceModel.find(
+        {
+          gestor: new ObjectId(gestorId)
+        },
+        {
+          _id: 1
+        }
+      )
+      
+      async function getBookings (arrayGestorResources) {
+        const gestorBookings =  arrayGestorResources.map( async (resource) => {
 
-      return res.status(200).json({ msg: "Agendamento cancelado!" });
+          const gestorBookingResource = await BookingModel.find(
+            {
+              resource: resource._id
+            }
+          );//.populate("user").populate("resource");
+
+          return gestorBookingResource;
+  
+        });
+        return gestorBookings
+      }
+
+      const gestorBookings = await getBookings(gestorResources);
+
+      console.log(gestorBookings);
+
+      if (!gestorBookings) {
+        return res.status(400).json({ msg: "Não existem agendamentos para este gestor!" });
+      }
+
+      return res.status(200).json(gestorBookings);
 
 
     } catch (error) {
