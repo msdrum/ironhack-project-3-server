@@ -112,41 +112,7 @@ bookingRoute.get(
         return !hoursReserved.includes(hour);
       });
 
-      /*
-    //consultar o availableBooking do Resource se existe nesse dia da semana
-    const hoursAvailable = await ResourceModel.
-      find(
-        {
-          resource: {
-            $eq: resource
-          },
-          availableBooking: {
-            $in: [regex]
-          }
-        },
-        {
-          name: 1,
-          availableBooking: 1
-        }
-      );  
-    
-
-    const newArray = hoursAvailable.map( (resource) => {
-
-      const hours = resource.availableBooking.filter( (hour) => {
-        
-        //para cada hora, buscar na collection Booking se há reserva
-        //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
-
-        return +hour[0] === diaSemana;
-      })
-      console.log(hours);
-
-      return {_id: resource._id, 
-              name: resource.name,
-              availableBooking: hours}
-    })
-    */
+  
 
       return res.status(200).json(freeHours);
 
@@ -155,6 +121,7 @@ bookingRoute.get(
       //se horário estiver disponível, mostrar
 
       //se horário estiver indisponível, não mostrar
+
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
@@ -189,6 +156,8 @@ bookingRoute.get(
   }
 );
 
+
+
 //Reservas dos recursos do gestor
 bookingRoute.get(
   "/gestor-bookings/:gestorId",
@@ -197,6 +166,38 @@ bookingRoute.get(
       const { gestorId } = req.params;
 
       const bookings = await BookingModel.find({ gestor: gestorId });
+
+      //filtrando os recursos do gestor
+      const gestorResources = await ResourceModel.find(
+        {
+          gestor: new ObjectId(gestorId)
+        },
+        {
+          _id: 1,
+          name: 1
+        }
+      )
+      console.log(gestorResources, typeof gestorResources);
+
+      //percorrer cada recurso do gestor e retornar os agendamentos
+      async function getBookings (arrayGestorResources) {
+        const gestorBookings =  arrayGestorResources.map( async (resource) => {
+
+          const gestorBookingResource = await BookingModel.find(
+            {
+              resource: resource._id
+            }
+          );//.populate("user").populate("resource");
+
+          return gestorBookingResource;
+  
+        });
+        return gestorBookings
+      }
+
+      const gestorBookings = await getBookings(gestorResources);
+
+      console.log(gestorBookings);
 
       if (!bookings) {
         return res
