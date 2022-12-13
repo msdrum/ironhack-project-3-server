@@ -140,7 +140,7 @@ resourceRoute.put(
     try {
       const { idResource } = req.params;
 
-      const resource = await TaskModel.findByIdAndUpdate(
+      const resource = await ResourceModel.findByIdAndUpdate(
         idResource,
         { complete: true, dateFin: Date.now() },
         { new: true, runValidators: true }
