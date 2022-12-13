@@ -81,17 +81,32 @@ bookingRoute.post("/availability", async (req, res) => {
     console.log("Reservas encontradas para a data ", dateFront,": ", booked);
   
     //
-    const hours = resourceToBook.availableBooking.filter( (hour) => {
-      
-      //para cada hora, buscar na collection Booking se há reserva
-      //caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022), pelo status !reservado e pelo horário (12-12-2022 1 09:00)
+    const allHours = resourceToBook.availableBooking.
+      filter( (hour) => {
+        return +hour[0] === week;
+      }).
+      map( (hour) => {
+        return hour.split(" ")[1];
+      }); 
 
-      //console.log(hour.split(" "));
+    console.log(allHours);
 
-      return +hour[0] === week;
+    /**
+     * para cada hora, buscar na collection Booking se há reserva, 
+     * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022), 
+     * pelo status !reservado e pelo horário (12-12-2022 1 09:00) 
+     * */ 
+
+    const hoursReserved = booked.map( (element) => {
+      return element.schedule.split("-")[3];
+    });
+
+
+    const freeHours = allHours.filter( (hour) => {
+      console.log(hour);
+
+      return !hoursReserved.includes(hour);
     })
-    console.log(hours);
-
 
 
     /*
@@ -130,7 +145,7 @@ bookingRoute.post("/availability", async (req, res) => {
     })
     */
 
-    return res.status(200).json(hours);
+    return res.status(200).json(freeHours);
 
     //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
 
