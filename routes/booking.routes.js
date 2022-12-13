@@ -11,17 +11,18 @@ const bookingRoute = express.Router();
 //ROTA TESTE para agendamento
 bookingRoute.post(
   "/new",
-   /*isAuth, attachCurrentUser,*/ async (req, res) => {
-  try {
-    const newBooking = await BookingModel.create({
-      ...req.body,
-    });
-    return res.status(200).json(newBooking);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error.errors);
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
+      const newBooking = await BookingModel.create({
+        ...req.body,
+      });
+      return res.status(200).json(newBooking);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
   }
-});
+);
 
 //ROTA DA DISPONIBILIDADE DE HORÁRIOS DO RECURSO
 
@@ -166,21 +167,21 @@ bookingRoute.get(
   "/my-bookings/:userId",
   /*isAuth, attachCurrentUser,*/ async (req, res) => {
     try {
-
       const { userId } = req.params;
 
-      const myBookings = await BookingModel.find(
-        {
-          user: new ObjectId(userId)
-        }
-      ).populate("user").populate("resource");
-      
+      const myBookings = await BookingModel.find({
+        user: new ObjectId(userId),
+      })
+        .populate("user")
+        .populate("resource");
+
       if (!myBookings) {
-        return res.status(400).json({ msg: "Não existem agendamentos para este usuário!" });
+        return res
+          .status(400)
+          .json({ msg: "Não existem agendamentos para este usuário!" });
       }
 
       return res.status(200).json(myBookings);
-
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
@@ -193,51 +194,23 @@ bookingRoute.get(
   "/gestor-bookings/:gestorId",
   /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
     try {
-
       const { gestorId } = req.params;
 
-      const gestorResources = await ResourceModel.find(
-        {
-          gestor: new ObjectId(gestorId)
-        },
-        {
-          _id: 1
-        }
-      )
-      
-      async function getBookings (arrayGestorResources) {
-        const gestorBookings =  arrayGestorResources.map( async (resource) => {
+      const bookings = await BookingModel.find({ gestor: gestorId });
 
-          const gestorBookingResource = await BookingModel.find(
-            {
-              resource: resource._id
-            }
-          );//.populate("user").populate("resource");
-
-          return gestorBookingResource;
-  
-        });
-        return gestorBookings
+      if (!bookings) {
+        return res
+          .status(400)
+          .json({ msg: "Não existem agendamentos para este gestor!" });
       }
 
-      const gestorBookings = await getBookings(gestorResources);
-
-      console.log(gestorBookings);
-
-      if (!gestorBookings) {
-        return res.status(400).json({ msg: "Não existem agendamentos para este gestor!" });
-      }
-
-      return res.status(200).json(gestorBookings);
-
-
+      return res.status(200).json(bookings);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
     }
   }
 );
-
 
 //ROTA PARA EDITAR UMA RESERVA
 // bookingRoute.put();
