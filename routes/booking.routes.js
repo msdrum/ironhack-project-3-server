@@ -101,26 +101,17 @@ bookingRoute.get(
        * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022),
        * pelo status !reservado e pelo horário (12-12-2022 1 09:00)
        * */
-
       const hoursReserved = booked.map((element) => {
         return element.schedule.split("-")[3];
       });
 
+      //se horário estiver disponível, mostrar
+      //se horário estiver indisponível, não mostrar
       const freeHours = allHours.filter((hour) => {
-        console.log(hour);
-
         return !hoursReserved.includes(hour);
       });
 
-  
-
-      return res.status(200).json(freeHours);
-
-      //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
-
-      //se horário estiver disponível, mostrar
-
-      //se horário estiver indisponível, não mostrar
+      return res.status(200).json(freeHours);   
 
     } catch (error) {
       console.log(error);
@@ -165,8 +156,8 @@ bookingRoute.get(
     try {
       const { gestorId } = req.params;
 
-      const bookings = await BookingModel.find({ gestor: gestorId });
-
+      const bookings = await BookingModel.find({ gestor: gestorId }).populate("gestor");
+      console.log(bookings);
 
       if (!bookings) {
         return res
@@ -175,7 +166,7 @@ bookingRoute.get(
       }
 
       return res.status(200).json(bookings);
-      
+
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
@@ -185,6 +176,8 @@ bookingRoute.get(
 
 //ROTA PARA EDITAR UMA RESERVA
 // bookingRoute.put();
+
+
 
 //ROTA PARA CANCELAR UMA RESERVA (DELETE)
 bookingRoute.delete(
