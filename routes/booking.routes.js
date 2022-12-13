@@ -8,7 +8,7 @@ const bookingRoute = express.Router();
 
 //ROUTES
 
-//ROTA TESTE para agendamento
+//ROTA NEW Booking
 bookingRoute.post(
   "/new",
   /*isAuth, attachCurrentUser,*/ async (req, res) => {
@@ -101,26 +101,17 @@ bookingRoute.get(
        * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022),
        * pelo status !reservado e pelo horário (12-12-2022 1 09:00)
        * */
-
       const hoursReserved = booked.map((element) => {
         return element.schedule.split("-")[3];
       });
 
+      //se horário estiver disponível, mostrar
+      //se horário estiver indisponível, não mostrar
       const freeHours = allHours.filter((hour) => {
-        console.log(hour);
-
         return !hoursReserved.includes(hour);
       });
 
-  
-
-      return res.status(200).json(freeHours);
-
-      //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
-
-      //se horário estiver disponível, mostrar
-
-      //se horário estiver indisponível, não mostrar
+      return res.status(200).json(freeHours);   
 
     } catch (error) {
       console.log(error);
@@ -156,8 +147,6 @@ bookingRoute.get(
   }
 );
 
-
-
 //Reservas dos recursos do gestor
 bookingRoute.get(
   "/gestor-bookings/:gestorId",
@@ -165,8 +154,8 @@ bookingRoute.get(
     try {
       const { gestorId } = req.params;
 
-      const bookings = await BookingModel.find({ gestor: gestorId });
-
+      const bookings = await BookingModel.find({ gestor: gestorId }).populate("gestor");
+      console.log(bookings);
 
       if (!bookings) {
         return res
@@ -175,7 +164,7 @@ bookingRoute.get(
       }
 
       return res.status(200).json(bookings);
-      
+
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
@@ -184,7 +173,49 @@ bookingRoute.get(
 );
 
 //ROTA PARA EDITAR UMA RESERVA
-// bookingRoute.put();
+bookingRoute.put(
+  "/edit/:bookingId",
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
+
+      const { bookingId } = req.params;
+
+      const updatedBooking = await BookingModel.findByIdAndUpdate(
+        { _id: bookingId },
+        { ...req.body },
+        { new: true, runValidators: true }
+      );
+      return res.status(200).json(updatedBooking);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
+//ROTA PARA APROVAR UMA RESERVA
+bookingRoute.put(
+  "/aprove/:bookingId",
+  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+    try {
+
+      const { bookingId } = req.params;
+
+      const updatedBooking = await BookingModel.findByIdAndUpdate(
+        { _id: bookingId },
+        { status: "Reservado" },
+        { new: true, runValidators: true }
+      );
+      return res.status(200).json(updatedBooking);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
 
 //ROTA PARA CANCELAR UMA RESERVA (DELETE)
 bookingRoute.delete(
@@ -206,6 +237,27 @@ bookingRoute.delete(
 );
 
 //ROTA PARA VERIFICAR TODAS AS RESERVAS FEITAS
-// bookingRoute.get();
+bookingRoute.get(
+  "/all",
+  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+    try {
+
+      const allBookings = await BookingModel.find({ })
+        .populate("user")
+        .populate("resource");
+
+      if (!allBookings) {
+        return res
+          .status(400)
+          .json({ msg: "Não existem reservas!" });
+      }
+
+      return res.status(200).json(allBookings);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
 
 export default bookingRoute;
