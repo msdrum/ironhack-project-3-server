@@ -1,4 +1,5 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
 import generateToken from "../config/jwt.config.js";
@@ -6,6 +7,8 @@ import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
 import isGestor from "../middlewares/isGestor.js";
 import UserModel from "../model/user.model.js";
+import BookingModel from "../model/booking.model.js";
+import ResourceModel from "../model/resource.model.js";
 
 const saltRounds = 10;
 
@@ -175,6 +178,12 @@ userRouter.delete("/delete/:id", async (req, res) => {
     if (!deletedUser) {
       return res.status(400).json({ msg: "Usuário não encontrado!" });
     }
+
+    if (ResourceModel.find({gestor: id})) {
+      return res.status(403).json({msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos."})
+    }
+
+    await BookingModel.deleteMany({ user: id})
 
     return res.status(200).json(users);
   } catch (error) {
