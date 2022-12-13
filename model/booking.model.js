@@ -28,7 +28,7 @@ const bookingSchema = new Schema({
    */
   status: {
     type: String,
-    enum: ["Pendente", "Reservado", "Cancelado"], //trocar para disponível, indisponível e cancelado
+    enum: ["Pendente", "Reservado", "Cancelado"],
     default: "Pendente",
   },
 });
