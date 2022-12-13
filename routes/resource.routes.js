@@ -1,4 +1,6 @@
 import express from "express";
+import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import isAuth from "../middlewares/isAuth.js";
 import ResourceModel from "../model/resource.model.js";
 import UserModel from "../model/user.model.js";
 import BookingModel from "../model/booking.model.js";
@@ -71,6 +73,42 @@ resourceRoute.post("/create-resource/", async (req, res) => {
   }
 });
 
+// Criar Recursos (incluir para avaliação do grupo- 15h41)
+resourceRoute.post(
+  "/create-resource",
+  isAuth,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const newResource = await ResourceModel.create({
+        ...req.body,
+        user: req.currentUser._id,
+      });
+
+      const userUpdated = await UserModel.findByIdAndUpdate(
+        req.currentUser._id,
+        {
+          $push: {
+            resource: newResource._id,
+          },
+        },
+        { new: true, runValidators: true }
+      );
+
+      await LogModel.create({
+        user: req.currentUser._id,
+        resource: newResource._id,
+        status: "Um novo recurso foi adicionado",
+      });
+
+      return res.status(201).json(newResource);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error.errors);
+    }
+  }
+);
+
 //get all-resource
 
 resourceRoute.get(
@@ -110,7 +148,7 @@ resourceRoute.put(
       await LogModel.create({
         user: req.currentUser._id,
         Resource: idResource,
-        status: `O recurso  "${updatedTask.details}" foi atualizado.`,
+        status: `O recurso  "${updatedResource.details}" foi atualizado.`,
       });
 
       return res.status(200).json(updatedResource);
@@ -132,7 +170,7 @@ resourceRoute.delete(
       const { idResource } = req.params;
 
       //deletei o recurso
-      const deleteResource = await ResourceModel.findByIdAndDelete(idResource);
+      const deletedResource = await ResourceModel.findByIdAndDelete(idResource);
 
       //retirei o id do recurso de dentro da minha array recurso
       await UserModel.findByIdAndUpdate(
@@ -188,5 +226,17 @@ resourceRoute.put(
     }
   }
 );
+
+//all-resource (incluir para avaliação do grupo- 15h41)
+resourceRoute.get("/all-resource", async (req, res) => {
+  try {
+    const allResource = await ResourceModel.find({}).populate("user");
+
+    return res.status(200).json(allResource);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error.errors);
+  }
+});
 
 export default resourceRoute;
