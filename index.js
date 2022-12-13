@@ -24,6 +24,7 @@ app.use("/user", userRoute);
 app.use("/resource", resourceRoute);
 app.use("/booking", bookingRoute);
 
+
 // o servidor subindo pro ar.
 app.listen(process.env.PORT, () => {
   console.log(
