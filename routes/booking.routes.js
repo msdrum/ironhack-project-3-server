@@ -23,11 +23,16 @@ bookingRoute.post("/new", async (req, res) => {
 
 bookingRoute.post("/availability", async (req, res) => {
   try {
-    //passar a data a ser consultada, vinda do front (12/12/2022)
-    const dateArray = req.body.schedule.split("/");
-    //Date(ano, mês-1, dia) -> mes começa com 0
-    const date = new Date(+dateArray[2], +dateArray[1]-1, +dateArray[0]);
-    //console.log(date);
+    //arrumando a data consultada, vinda do front (ex: 14-12-2022)
+    const dateFront = req.body.schedule;
+    const dateArray = dateFront.split("-")
+    const day = +dateArray[0];
+    const month = +dateArray[1]-1; //-> mes começa com 0
+    const year = +dateArray[2];
+
+    //criando objeto do tipo Date
+    const date = new Date(year, month, day);
+    console.log(date);
 
     /** descobrir qual dia da semana usando getDay() 
       (12/12/2022) --> 1 segunda
@@ -36,40 +41,56 @@ bookingRoute.post("/availability", async (req, res) => {
       (15/12/2022) --> 4 quinta
       (16/12/2022) --> 5 sexta
     */
-    const diaSemana = date.getDay();
-    //console.log(diaSemana, typeof diaSemana);
+    const week = date.getDay();
+    console.log(week, typeof week);
 
     //criando expressao regular para filtrar pelo dia da semana
-    const regex = new RegExp(`^${diaSemana}`)
-    //console.log(regex, typeof regex);
+    const regexWeek = new RegExp(`^${week}`)
+    console.log(regexWeek, typeof regexWeek);
 
     /**
-     * Resource - encontrando pelo ID
+     * Resource - encontrando pelo ID do resource
      */
     const resource = req.body.resource;
-    //console.log(resource);
+    console.log(resource);
 
     const bookingResource = await ResourceModel.
       findById(resource).
       populate("gestor");
-    //console.log(bookingResource);
+    console.log("Recurso a ser reservado:", bookingResource);
+
+/*
+    //criando expressao regular para filtrar data escolhida na collection booking
+    const regexDate = new RegExp(`^${}`)
+    console.log(regex, typeof regex);
 
     //buscar reservas do dia escolhido
     const booked = await BookingModel.
-      find({resource})
+      find({
+        resource: {
+          $eq: resource
+        },
+        schedule: {
+          $in: [regex]
+        }
+      },
+      {
+        name: 1,
+        availableBooking: 1
+      });
     console.log(booked);
-  
+  */
 
     const hours = bookingResource.availableBooking.filter( (hour) => {
       
       //para cada hora, buscar na collection Booking se há reserva
-      //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
+      //caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022), pelo status !reservado e pelo horário (12-12-2022 1 09:00)
 
       console.log(hour.split(" "));
 
       
 
-      return +hour[0] === diaSemana;
+      return +hour[0] === week;
     })
     console.log(hours);
 
