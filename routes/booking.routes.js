@@ -80,14 +80,13 @@ bookingRoute.post("/availability", async (req, res) => {
       });
     console.log("Reservas encontradas para a data ", dateFront,": ", booked);
   
-
+    //
     const hours = resourceToBook.availableBooking.filter( (hour) => {
       
       //para cada hora, buscar na collection Booking se há reserva
       //caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022), pelo status !reservado e pelo horário (12-12-2022 1 09:00)
 
       //console.log(hour.split(" "));
-      
 
       return +hour[0] === week;
     })
