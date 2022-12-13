@@ -1,7 +1,7 @@
 import express from "express";
 import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
-import { ObjectId} from 'mongodb';
+import { ObjectId } from "mongodb";
 
 const bookingRoute = express.Router();
 
@@ -14,20 +14,21 @@ bookingRoute.post("/new", async (req, res) => {
       ...req.body,
     });
     return res.status(200).json(newBooking);
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);
   }
 });
 
-bookingRoute.post("/availability", async (req, res) => {
+//ROTA DA DISPONIBILIDADE DE HORÁRIOS DO RECURSO
+
+bookingRoute.get("/availability", async (req, res) => {
   try {
     //arrumando a data consultada, vinda do front (ex: 14-12-2022)
     const dateFront = req.body.schedule;
-    const dateArray = dateFront.split("-")
+    const dateArray = dateFront.split("-");
     const day = +dateArray[0];
-    const month = +dateArray[1]-1; //-> mes começa com 0
+    const month = +dateArray[1] - 1; //-> mes começa com 0
     const year = +dateArray[2];
 
     //criando objeto do tipo Date
@@ -54,60 +55,56 @@ bookingRoute.post("/availability", async (req, res) => {
     const resource = req.body.resource;
     console.log(resource);
 
-    const resourceToBook = await ResourceModel.
-      findById(resource).
-      populate("gestor");
+    const resourceToBook = await ResourceModel.findById(resource).populate(
+      "gestor"
+    );
     console.log("Recurso a ser reservado:", resourceToBook);
 
-
     //criando expressao regular para filtrar data escolhida na collection booking
-    const regexDate = new RegExp(`^${dateFront}`)
+    const regexDate = new RegExp(`^${dateFront}`);
     console.log(regexDate, typeof regexDate);
 
     //buscando reservas do dia escolhido
-    const booked = await BookingModel.
-      find({
-           $and: [
-            {
-             resource: new ObjectId(resource)
-            },
-            {
-             schedule: {
-              $in: [regexDate]
-             }
-            }
-           ]
-      });
-    console.log("Reservas encontradas para a data ", dateFront,": ", booked);
-  
+    const booked = await BookingModel.find({
+      $and: [
+        {
+          resource: new ObjectId(resource),
+        },
+        {
+          schedule: {
+            $in: [regexDate],
+          },
+        },
+      ],
+    });
+    console.log("Reservas encontradas para a data ", dateFront, ": ", booked);
+
     //
-    const allHours = resourceToBook.availableBooking.
-      filter( (hour) => {
+    const allHours = resourceToBook.availableBooking
+      .filter((hour) => {
         return +hour[0] === week;
-      }).
-      map( (hour) => {
+      })
+      .map((hour) => {
         return hour.split(" ")[1];
-      }); 
+      });
 
     console.log(allHours);
 
     /**
-     * para cada hora, buscar na collection Booking se há reserva, 
-     * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022), 
-     * pelo status !reservado e pelo horário (12-12-2022 1 09:00) 
-     * */ 
+     * para cada hora, buscar na collection Booking se há reserva,
+     * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022),
+     * pelo status !reservado e pelo horário (12-12-2022 1 09:00)
+     * */
 
-    const hoursReserved = booked.map( (element) => {
+    const hoursReserved = booked.map((element) => {
       return element.schedule.split("-")[3];
     });
 
-
-    const freeHours = allHours.filter( (hour) => {
+    const freeHours = allHours.filter((hour) => {
       console.log(hour);
 
       return !hoursReserved.includes(hour);
-    })
-
+    });
 
     /*
     //consultar o availableBooking do Resource se existe nesse dia da semana
@@ -152,13 +149,17 @@ bookingRoute.post("/availability", async (req, res) => {
     //se horário estiver disponível, mostrar
 
     //se horário estiver indisponível, não mostrar
-
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);
   }
 });
+
+//ROTA PARA FAZER UMA RESERVA
+
+//ROTA PARA EDITAR UMA RESERVA
+
+//ROTA PARA CANCELAR UMA RESERVA (DELETE)
 
 export default bookingRoute;
 
