@@ -237,6 +237,27 @@ bookingRoute.delete(
 );
 
 //ROTA PARA VERIFICAR TODAS AS RESERVAS FEITAS
-// bookingRoute.get();
+bookingRoute.get(
+  "/all",
+  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+    try {
+
+      const allBookings = await BookingModel.find({ })
+        .populate("user")
+        .populate("resource");
+
+      if (!allBookings) {
+        return res
+          .status(400)
+          .json({ msg: "Não existem reservas!" });
+      }
+
+      return res.status(200).json(allBookings);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
 
 export default bookingRoute;
