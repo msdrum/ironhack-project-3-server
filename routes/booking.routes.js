@@ -2,6 +2,7 @@ import express from "express";
 import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
 import { ObjectId } from "mongodb";
+import attachCurrentUser from "../middlewares/attachCurrentUser.js";
 
 const bookingRoute = express.Router();
 
@@ -22,91 +23,93 @@ bookingRoute.post("/new", async (req, res) => {
 
 //ROTA DA DISPONIBILIDADE DE HORÁRIOS DO RECURSO
 
-bookingRoute.get("/availability", async (req, res) => {
-  try {
-    //arrumando a data consultada, vinda do front (ex: 14-12-2022)
-    const dateFront = req.body.schedule;
-    const dateArray = dateFront.split("-");
-    const day = +dateArray[0];
-    const month = +dateArray[1] - 1; //-> mes começa com 0
-    const year = +dateArray[2];
+bookingRoute.get(
+  "/availability",
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
+      //arrumando a data consultada, vinda do front (ex: 14-12-2022)
+      const dateFront = req.body.schedule;
+      const dateArray = dateFront.split("-");
+      const day = +dateArray[0];
+      const month = +dateArray[1] - 1; //-> mes começa com 0
+      const year = +dateArray[2];
 
-    //criando objeto do tipo Date
-    const date = new Date(year, month, day);
-    console.log(date);
+      //criando objeto do tipo Date
+      const date = new Date(year, month, day);
+      console.log(date);
 
-    /** descobrir qual dia da semana usando getDay() 
+      /** descobrir qual dia da semana usando getDay() 
       (12/12/2022) --> 1 segunda
       (13/12/2022) --> 2 terça
       (14/12/2022) --> 3 quarta
       (15/12/2022) --> 4 quinta
       (16/12/2022) --> 5 sexta
     */
-    const week = date.getDay();
-    console.log(week, typeof week);
+      const week = date.getDay();
+      console.log(week, typeof week);
 
-    //criando expressao regular para filtrar pelo dia da semana
-    const regexWeek = new RegExp(`^${week}`);
-    console.log(regexWeek, typeof regexWeek);
+      //criando expressao regular para filtrar pelo dia da semana
+      const regexWeek = new RegExp(`^${week}`);
+      console.log(regexWeek, typeof regexWeek);
 
-    /**
-     * Resource - encontrando pelo ID do resource
-     */
-    const resource = req.body.resource;
-    console.log(resource);
+      /**
+       * Resource - encontrando pelo ID do resource
+       */
+      const resource = req.body.resource;
+      console.log(resource);
 
-    const resourceToBook = await ResourceModel.findById(resource).populate(
-      "gestor"
-    );
-    console.log("Recurso a ser reservado:", resourceToBook);
+      const resourceToBook = await ResourceModel.findById(resource).populate(
+        "gestor"
+      );
+      console.log("Recurso a ser reservado:", resourceToBook);
 
-    //criando expressao regular para filtrar data escolhida na collection booking
-    const regexDate = new RegExp(`^${dateFront}`);
-    console.log(regexDate, typeof regexDate);
+      //criando expressao regular para filtrar data escolhida na collection booking
+      const regexDate = new RegExp(`^${dateFront}`);
+      console.log(regexDate, typeof regexDate);
 
-    //buscando reservas do dia escolhido
-    const booked = await BookingModel.find({
-      $and: [
-        {
-          resource: new ObjectId(resource),
-        },
-        {
-          schedule: {
-            $in: [regexDate],
+      //buscando reservas do dia escolhido
+      const booked = await BookingModel.find({
+        $and: [
+          {
+            resource: new ObjectId(resource),
           },
-        },
-      ],
-    });
-    console.log("Reservas encontradas para a data ", dateFront, ": ", booked);
+          {
+            schedule: {
+              $in: [regexDate],
+            },
+          },
+        ],
+      });
+      console.log("Reservas encontradas para a data ", dateFront, ": ", booked);
 
-    //
-    const allHours = resourceToBook.availableBooking
-      .filter((hour) => {
-        return +hour[0] === week;
-      })
-      .map((hour) => {
-        return hour.split(" ")[1];
+      //
+      const allHours = resourceToBook.availableBooking
+        .filter((hour) => {
+          return +hour[0] === week;
+        })
+        .map((hour) => {
+          return hour.split(" ")[1];
+        });
+
+      console.log(allHours);
+
+      /**
+       * para cada hora, buscar na collection Booking se há reserva,
+       * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022),
+       * pelo status !reservado e pelo horário (12-12-2022 1 09:00)
+       * */
+
+      const hoursReserved = booked.map((element) => {
+        return element.schedule.split("-")[3];
       });
 
-    console.log(allHours);
+      const freeHours = allHours.filter((hour) => {
+        console.log(hour);
 
-    /**
-     * para cada hora, buscar na collection Booking se há reserva,
-     * caso exista, consultar collection Bookings filtrando pela data (ex. 12-12-2022),
-     * pelo status !reservado e pelo horário (12-12-2022 1 09:00)
-     * */
+        return !hoursReserved.includes(hour);
+      });
 
-    const hoursReserved = booked.map((element) => {
-      return element.schedule.split("-")[3];
-    });
-
-    const freeHours = allHours.filter((hour) => {
-      console.log(hour);
-
-      return !hoursReserved.includes(hour);
-    });
-
-    /*
+      /*
     //consultar o availableBooking do Resource se existe nesse dia da semana
     const hoursAvailable = await ResourceModel.
       find(
@@ -142,24 +145,56 @@ bookingRoute.get("/availability", async (req, res) => {
     })
     */
 
-    return res.status(200).json(freeHours);
+      return res.status(200).json(freeHours);
 
-    //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
+      //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
 
-    //se horário estiver disponível, mostrar
+      //se horário estiver disponível, mostrar
 
-    //se horário estiver indisponível, não mostrar
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error.errors);
+      //se horário estiver indisponível, não mostrar
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
   }
-});
+);
 
-//ROTA PARA FAZER UMA RESERVA
+//MINHAS RESERVAS
+bookingRoute.get(
+  "/my-bookings",
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
 
 //ROTA PARA EDITAR UMA RESERVA
+// bookingRoute.put();
 
 //ROTA PARA CANCELAR UMA RESERVA (DELETE)
+bookingRoute.delete(
+  "/delete/:bookingId",
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
+      const { bookingId } = req.params;
+      const deletedBooking = await BookingModel.findByIdAndDelete(bookingId);
+      if (!deletedBooking) {
+        return res.status(400).json({ msg: "Agendamento não encontrado!" });
+      }
+
+      return res.status(200).json({ msg: "Agendamento cancelado!" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
+//ROTA PARA VERIFICAR TODAS AS RESERVAS FEITAS
+// bookingRoute.get();
 
 export default bookingRoute;
 
