@@ -41,7 +41,10 @@ userRouter.post("/signup", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const createdUser = await UserModel.create({...req.body, passwordHash: hashedPassword});
+    const createdUser = await UserModel.create({
+      ...req.body,
+      passwordHash: hashedPassword,
+    });
 
     delete createdUser._doc.passwordHash;
 
@@ -94,11 +97,12 @@ userRouter.post("/login", async (req, res) => {
     }
 
     if (user.confirmEmail === false) {
-      return res.status(401).json({ msg: "Usuário não confirmado. Por favor validar email." });
+      return res
+        .status(401)
+        .json({ msg: "Usuário não confirmado. Por favor validar email." });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
-
       delete user._doc.passwordHash;
 
       const token = generateToken(user);
@@ -145,23 +149,25 @@ userRouter.get("/all-users", /*isAuth, isGestor,*/ async (req, res) => {
   }
 );
 
-userRouter.put("/edit-any/:id", /*isAuth, isGestor,*/ async (req, res) => {
-  try {
+userRouter.put(
+  "/edit-any/:id",
+  /*isAuth, isGestor,*/ async (req, res) => {
+    try {
+      const { id } = req.params;
 
-    const { id } = req.params
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        id,
+        { ...req.body },
+        { new: true, runValidators: true }
+      );
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      id,
-      { ...req.body },
-      { new: true, runValidators: true }
-    );
-
-    return res.status(200).json(updatedUser);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error.errors);
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
   }
-});
+);
 
 userRouter.put("/edit", /*isAuth,*/ attachCurrentUser, async (req, res) => {
   try {
@@ -182,19 +188,23 @@ userRouter.put("/edit", /*isAuth,*/ attachCurrentUser, async (req, res) => {
 
 userRouter.delete("/delete/:id", async (req, res) => {
   try {
-    const { id } = req.params
-    
+    const { id } = req.params;
+
     const deletedUser = await UserModel.findByIdAndDelete(id);
 
     if (!deletedUser) {
       return res.status(400).json({ msg: "Usuário não encontrado!" });
     }
 
-    if (ResourceModel.find({gestor: id})) {
-      return res.status(403).json({msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos."})
+    if (ResourceModel.find({ gestor: id })) {
+      return res
+        .status(403)
+        .json({
+          msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
+        });
     }
 
-    await BookingModel.deleteMany({ user: id})
+    await BookingModel.deleteMany({ user: id });
 
     return res.status(200).json(users);
   } catch (error) {
@@ -207,7 +217,9 @@ userRouter.get("/oneUser/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = await UserModel.findById(id).populate("resources").populate("booking");
+    const user = await UserModel.findById(id)
+      .populate("resources")
+      .populate("booking");
 
     if (!user) {
       return res.status(400).json({ msg: " Usuário não encontrado!" });

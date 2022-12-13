@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 
 const bookingSchema = new Schema({
-
   /** referência ao usuário logado que fez a reserv */
   user: {
     type: Schema.Types.ObjectId,
@@ -9,18 +8,19 @@ const bookingSchema = new Schema({
   },
 
   /** referência ao recurso escolhido para ser reservado */
-  resource: { 
-    type: Schema.Types.ObjectId, 
-    ref: "Resource" 
+  resource: {
+    type: Schema.Types.ObjectId,
+    ref: "Resource",
   },
 
-  /** data e horário agendado  
+  /** data e horário agendado
    * pegar a referência correta (Schedule não é um model, precisa pegar o campo schedule do UserModel)
-  */
-  schedule: { 
-    type: String 
+   */
+  schedule: {
+    //Date?
+    type: String,
   },
-  
+
   /** situação da reserva
    * pendente, quando é aberta e está aguardando aprovação do gestor do recurso
    * reservado, quando gestor aprovou a reserva,
@@ -28,7 +28,7 @@ const bookingSchema = new Schema({
    */
   status: {
     type: String,
-    enum: ["Pendente", "Reservado", "Cancelado"], //trocar para disponível, indisponível e cancelado
+    enum: ["Pendente", "Reservado", "Cancelado"],
     default: "Pendente",
   },
 });
