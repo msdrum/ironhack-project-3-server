@@ -9,7 +9,9 @@ const bookingRoute = express.Router();
 //ROUTES
 
 //ROTA TESTE para agendamento
-bookingRoute.post("/new", async (req, res) => {
+bookingRoute.post(
+  "/new",
+   /*isAuth, attachCurrentUser,*/ async (req, res) => {
   try {
     const newBooking = await BookingModel.create({
       ...req.body,
@@ -159,17 +161,56 @@ bookingRoute.get(
   }
 );
 
-//MINHAS RESERVAS
+//MINHAS RESERVAS --> reservas do usuario
 bookingRoute.get(
-  "/my-bookings",
+  "/my-bookings/:userId",
   /*isAuth, attachCurrentUser,*/ async (req, res) => {
     try {
+
+      const { userId } = req.params;
+
+      const myBookings = await BookingModel.find(
+        {
+          user: new ObjectId(userId)
+        }
+      ).populate("user").populate("resource");
+      
+      if (!myBookings) {
+        return res.status(400).json({ msg: "Não existem agendamentos para este usuário!" });
+      }
+
+      return res.status(200).json(myBookings);
+
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
     }
   }
 );
+
+//Reservas dos recursos do gestor
+bookingRoute.get(
+  "/gestor-bookings",
+  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+    try {
+
+
+      // const { bookingId } = req.params;
+      // const deletedBooking = await BookingModel.findByIdAndDelete(bookingId);
+      // if (!deletedBooking) {
+      //   return res.status(400).json({ msg: "Agendamento não encontrado!" });
+      // }
+
+      return res.status(200).json({ msg: "Agendamento cancelado!" });
+
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
 
 //ROTA PARA EDITAR UMA RESERVA
 // bookingRoute.put();
