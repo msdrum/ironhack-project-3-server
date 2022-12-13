@@ -8,7 +8,7 @@ const bookingRoute = express.Router();
 
 //ROUTES
 
-//ROTA TESTE para agendamento
+//ROTA NEW Booking
 bookingRoute.post(
   "/new",
   /*isAuth, attachCurrentUser,*/ async (req, res) => {
@@ -147,8 +147,6 @@ bookingRoute.get(
   }
 );
 
-
-
 //Reservas dos recursos do gestor
 bookingRoute.get(
   "/gestor-bookings/:gestorId",
@@ -175,8 +173,48 @@ bookingRoute.get(
 );
 
 //ROTA PARA EDITAR UMA RESERVA
-// bookingRoute.put();
+bookingRoute.put(
+  "/edit/:bookingId",
+  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+    try {
 
+      const { bookingId } = req.params;
+
+      const updatedBooking = await BookingModel.findByIdAndUpdate(
+        { _id: bookingId },
+        { ...req.body },
+        { new: true, runValidators: true }
+      );
+      return res.status(200).json(updatedBooking);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
+
+//ROTA PARA APROVAR UMA RESERVA
+bookingRoute.put(
+  "/aprove/:bookingId",
+  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+    try {
+
+      const { bookingId } = req.params;
+
+      const updatedBooking = await BookingModel.findByIdAndUpdate(
+        { _id: bookingId },
+        { status: "Reservado" },
+        { new: true, runValidators: true }
+      );
+      return res.status(200).json(updatedBooking);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
 
 
 //ROTA PARA CANCELAR UMA RESERVA (DELETE)
