@@ -167,37 +167,6 @@ bookingRoute.get(
 
       const bookings = await BookingModel.find({ gestor: gestorId });
 
-      //filtrando os recursos do gestor
-      const gestorResources = await ResourceModel.find(
-        {
-          gestor: new ObjectId(gestorId)
-        },
-        {
-          _id: 1,
-          name: 1
-        }
-      )
-      console.log(gestorResources, typeof gestorResources);
-
-      //percorrer cada recurso do gestor e retornar os agendamentos
-      async function getBookings (arrayGestorResources) {
-        const gestorBookings =  arrayGestorResources.map( async (resource) => {
-
-          const gestorBookingResource = await BookingModel.find(
-            {
-              resource: resource._id
-            }
-          );//.populate("user").populate("resource");
-
-          return gestorBookingResource;
-  
-        });
-        return gestorBookings
-      }
-
-      const gestorBookings = await getBookings(gestorResources);
-
-      console.log(gestorBookings);
 
       if (!bookings) {
         return res
@@ -206,6 +175,7 @@ bookingRoute.get(
       }
 
       return res.status(200).json(bookings);
+      
     } catch (error) {
       console.log(error);
       return res.status(500).json(error.errors);
@@ -239,44 +209,3 @@ bookingRoute.delete(
 // bookingRoute.get();
 
 export default bookingRoute;
-
-/**
- * availableBooking: [
-   "1 8:00",
-   "2 8:00",
-]
-`${diaDaSemana} ${hora}`
-Marcio Silva | 92 WDFT para Todos (11:54)
-dd = req.body.date.getDate()
-ss = req.body.date.getDay()
-const string = `${ss} ${dd}`
-
- */
-/**
- * /Pegar o mês (0-11) necessita de formatação:
-
-getMonth()
-
-//Pegar o dia do mês (1 ao 31)
-
-getDate()
-
-//Pegar o dia da semana (0 à 6) necessita de formatação:
-
-getDay()
-
-//Pegar a hora da reserva (0-23):
-
-getHours()
-
-
----------------------------------------------------------
-		Agendamento utilizando Date
-
-ResourceModel:
-
-avaliableBooking: array utilizando Date com os parâmetros do dia da semana (getDay) e horários disponíveis (getHours) Ex:
-
-1
- * 
- */
