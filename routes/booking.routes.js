@@ -1,4 +1,5 @@
 import express from "express";
+import { resourceLimits } from "worker_threads";
 import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
 
@@ -7,11 +8,13 @@ const bookingRoute = express.Router();
 //ROUTES
 
 //ROTA TESTE para agendamento
-bookingRoute.post("/booking/", async (req, res) => {
+bookingRoute.post("/new", async (req, res) => {
   try {
     const newBooking = await BookingModel.create({
       ...req.body,
     });
+    return res.status(200).json(newBooking);
+
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);
@@ -20,43 +23,85 @@ bookingRoute.post("/booking/", async (req, res) => {
 
 bookingRoute.post("/availability", async (req, res) => {
   try {
-    //passaria a data a ser consultada, vinda do front (12/12/2022)
-    // const { schedule } = req.body;
-    // console.log(schedule, typeof schedule);
-    // const date = new Date(schedule);
-    const date = new Date(req.body.schedule);
-    console.log(date);
+    //passar a data a ser consultada, vinda do front (12/12/2022)
+    const dateArray = req.body.schedule.split("/");
+    //Date(ano, mês-1, dia) -> mes começa com 0
+    const date = new Date(+dateArray[2], +dateArray[1]-1, +dateArray[0]);
+    //console.log(date);
 
-    //descobrir qual dia da semana (12/12/2022) --> 1
+    /** descobrir qual dia da semana usando getDay() 
+      (12/12/2022) --> 1 segunda
+      (13/12/2022) --> 2 terça
+      (14/12/2022) --> 3 quarta
+      (15/12/2022) --> 4 quinta
+      (16/12/2022) --> 5 sexta
+    */
     const diaSemana = date.getDay();
-    console.log(diaSemana, typeof diaSemana);
-    const regex = new RegExp(`^${diaSemana}`)
-    console.log(regex, typeof regex);
+    //console.log(diaSemana, typeof diaSemana);
 
+    //criando expressao regular para filtrar pelo dia da semana
+    const regex = new RegExp(`^${diaSemana}`)
+    //console.log(regex, typeof regex);
+
+    /**
+     * Resource - encontrando pelo ID
+     */
+    const resource = req.body.resource;
+    //console.log(resource);
+
+    const bookingResource = await ResourceModel.
+      findById(resource).
+      populate("gestor");
+    //console.log(bookingResource);
+
+    //buscar reservas do dia escolhido
+    const booked = await BookingModel.
+      find({resource})
+    console.log(booked);
+  
+
+    const hours = bookingResource.availableBooking.filter( (hour) => {
+      
+      //para cada hora, buscar na collection Booking se há reserva
+      //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
+
+      console.log(hour.split(" "));
+
+      
+
+      return +hour[0] === diaSemana;
+    })
+    console.log(hours);
+
+
+
+    /*
     //consultar o availableBooking do Resource se existe nesse dia da semana
     const hoursAvailable = await ResourceModel.
       find(
         {
+          resource: {
+            $eq: resource
+          },
           availableBooking: {
-              $in: [regex]
-           }
+            $in: [regex]
           }
-          ,
-          {
-           name: 1,
-           availableBooking: 1
-          }
+        },
+        {
+          name: 1,
+          availableBooking: 1
+        }
       );  
     
-    //fazer forEach em hoursAvailable
+
     const newArray = hoursAvailable.map( (resource) => {
 
       const hours = resource.availableBooking.filter( (hour) => {
         
         //para cada hora, buscar na collection Booking se há reserva
+        //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
 
-        
-        return +hour[0] === diaSemana
+        return +hour[0] === diaSemana;
       })
       console.log(hours);
 
@@ -64,9 +109,9 @@ bookingRoute.post("/availability", async (req, res) => {
               name: resource.name,
               availableBooking: hours}
     })
+    */
 
-
-    return res.status(200).json(newArray);
+    return res.status(200).json(hours);
 
     //caso exista, consultar collection Bookings filtrando pela data (12/12/2022), pelo status !reservado e pelo horário (12/12/2022 1 09:00)
 
