@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
-import bcrypt from "bcrypt";
 import generateToken from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
