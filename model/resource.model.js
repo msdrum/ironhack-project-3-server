@@ -42,8 +42,11 @@ const resourceSchema = new Schema({
   availableBooking: [
     //Date?
     { type: String },
-  ],
-});
+  ]},
+  {
+    timestamps: true,
+  }
+);
 
 const ResourceModel = model("Resource", resourceSchema);
 
