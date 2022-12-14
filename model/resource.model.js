@@ -21,7 +21,7 @@ const resourceSchema = new Schema({
   },
 
   /* id do gestor responsável pelo recurso */
-  gestor: {
+ /* gestor: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
