@@ -232,7 +232,7 @@ resourceRoute.put(
 //all-resource (incluir para avaliação do grupo- 15h41)
 resourceRoute.get("/all-resource", async (req, res) => {
   try {
-    const allResource = await ResourceModel.find({});
+    const allResource = await ResourceModel.find({}).populate("gestor");
     console.log(allResource);
 
     return res.status(200).json(allResource);
