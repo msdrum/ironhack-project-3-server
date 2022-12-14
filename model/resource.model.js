@@ -19,12 +19,16 @@ const resourceSchema = new Schema({
     unique: true,
     required: true,
   },
-
-  /* id do gestor responsável pelo recurso */
   gestor: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+
+  /* id do gestor responsável pelo recurso */
+  //  /* gestor: {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "User",
+  //   },
 
   /** horários disponíveis para reserva do recurso, por ex. seg e qua de manhã: 
   {1 08:00}, {1 09:00}, {1 10:00}, {1 11:00},
@@ -42,8 +46,11 @@ const resourceSchema = new Schema({
   availableBooking: [
     //Date?
     { type: String },
-  ],
-});
+  ]},
+  {
+    timestamps: true,
+  }
+);
 
 const ResourceModel = model("Resource", resourceSchema);
 
