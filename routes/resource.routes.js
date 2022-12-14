@@ -1,9 +1,13 @@
-import express from "express";
+import express, { Router } from "express";
+import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import isGestor from "../middlewares/isGestor.js";
+import isAuth from "../middlewares/isAuth.js";
 import ResourceModel from "../model/resource.model.js";
 import UserModel from "../model/user.model.js";
 import BookingModel from "../model/booking.model.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+
 
 const resourceRoute = express.Router();
 
@@ -11,41 +15,41 @@ const resourceRoute = express.Router();
 
 //POST create-resource
 
-// resourceRoute.post(
+//  resourceRoute.post(
 //   "/create-resource",
-//   /*isAuth, attachCurrentUser,*/ async (req, res) => {
+//   isAuth, attachCurrentUser, async (req, res) => {
 //     try {
-//       const newResource = await ResourceModel.create({
+//        const newResource = await ResourceModel.create({
 //         ...req.body,
 //         gestor: req.currentUser._id,
-//       });
+//        });
 
-//       const userUpdated = await UserModel.findByIdAndUpdate(
-//         req.currentUser._id,
-//         {
-//           $push: {
-//             resources: newResource._id,
-//           },
-//         },
+//        const userUpdated = await UserModel.findByIdAndUpdate(
+//          req.currentUser._id,
+//          {
+//            $push: {
+//              resources: newResource._id,
+//            },
+//        },
 //         { new: true, runValidators: true }
 //       );
-
-//       await BookingsModel.create({
+//        await BookingsModel.create({
 //         user: req.currentUser._id,
 //         resource: newResource._id,
 //         status: "Pendente", //rever o status
 //       });
 
 //       return res.status(201).json(newResource);
-//     } catch (error) {
+//      } catch (error) {
 //       console.log(error);
-//       return res.status(500).json(error.errors);
+//        return res.status(500).json(error.errors);
 //     }
 //   }
-// );
+//  );
 
 //ROTA TESTE criar um novo Resource e alocá-lo para um gestor.
-resourceRoute.post("/create-resource/", async (req, res) => {
+
+resourceRoute.post("/create-resource", async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -69,21 +73,55 @@ resourceRoute.post("/create-resource/", async (req, res) => {
     return res.status(201).json(newResource);
   } catch (error) {
     console.log(error);
-    return res.status(500).json(error.errors);
+    return res.status(500).json(error.erros);
   }
 });
+/*
+// Criar Recursos (incluir para avaliação do grupo- 15h41)
+resourceRoute.post(
+  "/create-resource",
+/*isAuth, isGestor,
+ attachCurrentUser,
+  async (req, res) => {
+    try {
+      const newResource = await ResourceModel.create({
+        ...req.body,
+        gestor: req.currentGestor._id,
+      });
 
+      const userUpdated = await UserModel.findByIdAndUpdate(
+        req.currentUser._id,{
+          $push: {
+            resource: newResource._id,
+          },
+        },
+        { new: true, runValidators: true });
+
+      await LogModel.create({
+        user: req.currentUser._id,
+        resource: newResource._id,
+        status: "Um novo recurso foi adicionado",});
+
+      return res.status(201).json(newResource);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error.errors);
+    }
+  }
+);
+*/
 //get all-resource
 
 resourceRoute.get(
   "/my-resource",
-  isAuth,
-  attachCurrentUser,
+  /* isAuth,
+  isGestor,
+  attachCurrentUser,*/
   async (req, res) => {
     try {
       const allResource = await ResourceModel.find({
         user: req.currentUser._id,
-      }).populate("user");
+      }).populate("gestor");
 
       return res.status(200).json(allResource);
     } catch (error) {
@@ -97,8 +135,9 @@ resourceRoute.get(
 
 resourceRoute.put(
   "/edit/:idResource",
-  isAuth,
-  attachCurrentUser,
+  /*isAuth,
+  isGestor,
+  attachCurrentUser,*/
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -112,7 +151,7 @@ resourceRoute.put(
       await LogModel.create({
         user: req.currentUser._id,
         Resource: idResource,
-        status: `O recurso  "${updatedTask.details}" foi atualizado.`,
+        status: `O recurso  "${updatedResource.details}" foi atualizado.`,
       });
 
       return res.status(200).json(updatedResource);
@@ -127,14 +166,15 @@ resourceRoute.put(
 
 resourceRoute.delete(
   "/delete/:idResource",
-  isAuth,
-  attachCurrentUser,
+  /*isAuth,
+  isGestor,
+  attachCurrentUser,*/
   async (req, res) => {
     try {
       const { idResource } = req.params;
 
       //deletei o recurso
-      const deleteResource = await ResourceModel.findByIdAndDelete(idResource);
+      const deletedResource = await ResourceModel.findByIdAndDelete(idResource);
 
       //retirei o id do recurso de dentro da minha array recurso
       await UserModel.findByIdAndUpdate(
@@ -165,8 +205,9 @@ resourceRoute.delete(
 
 resourceRoute.put(
   "/complete/:idResource",
-  isAuth,
-  attachCurrentUser,
+  /*isAuth,
+  isGestor,
+  attachCurrentUser,*/
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -190,5 +231,17 @@ resourceRoute.put(
     }
   }
 );
+
+//all-resource (incluir para avaliação do grupo- 15h41)
+resourceRoute.get("/all-resource", async (req, res) => {
+  try {
+    const allResource = await ResourceModel.find({}).populate("gestor");
+
+    return res.status(200).json(allResource);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error.errors);
+  }
+});
 
 export default resourceRoute;

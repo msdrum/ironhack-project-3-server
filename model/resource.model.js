@@ -21,7 +21,7 @@ const resourceSchema = new Schema({
   },
 
   /* id do gestor responsável pelo recurso */
-  gestor: {
+ /* gestor: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
@@ -42,8 +42,11 @@ const resourceSchema = new Schema({
   availableBooking: [
     //Date?
     { type: String },
-  ],
-});
+  ]},
+  {
+    timestamps: true,
+  }
+);
 
 const ResourceModel = model("Resource", resourceSchema);
 
