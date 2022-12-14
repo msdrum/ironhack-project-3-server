@@ -1,13 +1,10 @@
 import express, { Router } from "express";
-import attachCurrentUser from "../middlewares/attachCurrentUser.js";
 import isGestor from "../middlewares/isGestor.js";
-import isAuth from "../middlewares/isAuth.js";
 import ResourceModel from "../model/resource.model.js";
 import UserModel from "../model/user.model.js";
 import BookingModel from "../model/booking.model.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
-
 
 const resourceRoute = express.Router();
 
@@ -49,7 +46,7 @@ const resourceRoute = express.Router();
 
 //ROTA TESTE criar um novo Resource e alocá-lo para um gestor.
 
-resourceRoute.post("/create-resource", async (req, res) => {
+resourceRoute.post("/create-resource/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -236,6 +233,7 @@ resourceRoute.put(
 resourceRoute.get("/all-resource", async (req, res) => {
   try {
     const allResource = await ResourceModel.find({}).populate("gestor");
+    console.log(allResource);
 
     return res.status(200).json(allResource);
   } catch (error) {
