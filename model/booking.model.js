@@ -31,6 +31,10 @@ const bookingSchema = new Schema({
     enum: ["Pendente", "Reservado", "Cancelado"],
     default: "Pendente",
   },
+  gestor: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const BookingModel = model("Booking", bookingSchema);
