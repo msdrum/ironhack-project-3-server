@@ -3,6 +3,8 @@ import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
 import { ObjectId } from "mongodb";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import isAuth from "../middlewares/isAuth.js";
+import isGestor from "../middlewares/isGestor.js";
 
 const bookingRoute = express.Router();
 
@@ -11,7 +13,7 @@ const bookingRoute = express.Router();
 //ROTA NEW Booking
 bookingRoute.post(
   "/new",
-  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       const newBooking = await BookingModel.create({
         ...req.body,
@@ -28,7 +30,7 @@ bookingRoute.post(
 
 bookingRoute.post(
   "/availability",
-  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       console.log("body recebido:", req.body);
       if (!req.body) return ("Body nao recebido");
@@ -125,7 +127,7 @@ bookingRoute.post(
 //MINHAS RESERVAS --> reservas do usuario
 bookingRoute.get(
   "/my-bookings/:userId",
-  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       const { userId } = req.params;
 
@@ -152,7 +154,7 @@ bookingRoute.get(
 //Reservas dos recursos do gestor
 bookingRoute.get(
   "/gestor-bookings/:gestorId",
-  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+  isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
       const { gestorId } = req.params;
 
@@ -177,7 +179,7 @@ bookingRoute.get(
 //ROTA PARA EDITAR UMA RESERVA
 bookingRoute.put(
   "/edit/:bookingId",
-  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
 
       const { bookingId } = req.params;
@@ -199,7 +201,7 @@ bookingRoute.put(
 //ROTA PARA APROVAR UMA RESERVA
 bookingRoute.put(
   "/aprove/:bookingId",
-  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+  isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
 
       const { bookingId } = req.params;
@@ -222,7 +224,7 @@ bookingRoute.put(
 //ROTA PARA CANCELAR UMA RESERVA (DELETE)
 bookingRoute.delete(
   "/delete/:bookingId",
-  /*isAuth, attachCurrentUser,*/ async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       const { bookingId } = req.params;
       const deletedBooking = await BookingModel.findByIdAndDelete(bookingId);
@@ -241,7 +243,7 @@ bookingRoute.delete(
 //ROTA PARA VERIFICAR TODAS AS RESERVAS FEITAS
 bookingRoute.get(
   "/all",
-  /*isAuth, attachCurrentUser, isGestor*/ async (req, res) => {
+  isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
 
       const allBookings = await BookingModel.find({ })
