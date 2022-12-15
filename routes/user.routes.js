@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
 
 userRouter.post("/signup", async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, email } = req.body;
 
     if (
       !password ||
@@ -48,16 +48,16 @@ userRouter.post("/signup", async (req, res) => {
 
     delete createdUser._doc.passwordHash;
 
-    //const mailOptions = {
-    //  from: "turma92wd@hotmail.com", //nosso email
-    //  to: email, //o email do usuário
-    //  subject: "Ativação de Conta",
-    //  html: `
-    //    <h1>Bem vindo ao nosso site.</h1>
-    //    <p>Por favor, confirme seu email clicando no link abaixo.</p>
-    //    <a href=http://localhost:8080/user/activate-account/${createdUser._id}>ATIVE SUA CONTA</a>
-    //  `,
-    //};
+    const mailOptions = {
+      from: "reservasgov-do-not-reply@hotmail.com", //nosso email
+      to: email, //o email do usuário
+      subject: "Ativação de Conta no reservagov",
+      html: `
+        <h1>Bem vindo ao incrível mundo da reserva de recursos governamentais!</h1>
+        <p>Por favor, confirme seu email clicando no link abaixo.</p>
+        <a href=http://localhost:8080/user/activate-account/${createdUser._id}>ATIVE SUA CONTA</a>
+      `,
+    };
 
     //envio do email
     //await transporter.sendMail(mailOptions);
@@ -125,9 +125,19 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-userRouter.get(
-  "/all-users",
-  /*isAuth, isGestor,*/ async (req, res) => {
+userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.currentUser._id).populate("resources").populate("booking")
+
+
+    return res.status(200).json(req.currentUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.errors);
+  }
+});
+
+userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
       const users = await UserModel.find({}, { passwordHash: 0 });
 
@@ -141,7 +151,7 @@ userRouter.get(
 
 userRouter.put(
   "/edit-any/:id",
-  /*isAuth, isGestor,*/ async (req, res) => {
+  isAuth, isGestor, async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -159,7 +169,7 @@ userRouter.put(
   }
 );
 
-userRouter.put("/edit", /*isAuth,*/ attachCurrentUser, async (req, res) => {
+userRouter.put("/edit", isAuth, attachCurrentUser, async (req, res) => {
   try {
     //quem é o usuário? -> req.currentUser
 
@@ -186,17 +196,17 @@ userRouter.delete("/delete/:id", async (req, res) => {
       return res.status(400).json({ msg: "Usuário não encontrado!" });
     }
 
-    if (ResourceModel.find({ gestor: id })) {
-      return res
-        .status(403)
-        .json({
-          msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
-        });
-    }
+    //if ((await ResourceModel.find({ gestor: id })).length) {
+    //  return res
+    //    .status(403)
+    //    .json({
+    //      msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
+    //    });
+    //}
 
     await BookingModel.deleteMany({ user: id });
 
-    return res.status(200).json(users);
+    return res.status(200).json(deletedUser);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);

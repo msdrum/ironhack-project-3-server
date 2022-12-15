@@ -145,11 +145,6 @@ resourceRoute.put(
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        user: req.currentUser._id,
-        Resource: idResource,
-        status: `O recurso  "${updatedResource.details}" foi atualizado.`,
-      });
 
       return res.status(200).json(updatedResource);
     } catch (error) {
@@ -184,11 +179,7 @@ resourceRoute.delete(
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        Resource: idResource,
-        user: req.currentUser._id,
-        status: `O recurso "${deletedResource.details}" foi excluída com o status ${deletedResource.status}.`,
-      });
+      
 
       return res.status(200).json(deletedResource);
     } catch (error) {
@@ -201,7 +192,7 @@ resourceRoute.delete(
 //editar-resource
 
 resourceRoute.put(
-  "/complete/:idResource",
+  "/edit/:idResource",
   /*isAuth,
   isGestor,
   attachCurrentUser,*/
@@ -211,15 +202,16 @@ resourceRoute.put(
 
       const resource = await ResourceModel.findByIdAndUpdate(
         idResource,
-        { complete: true, dateFin: Date.now() },
+        // { complete: true, dateFin: Date.now() },
+        { ...req.body },
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        user: req.currentUser._id,
-        resource: idResource,
-        status: `A edição "${resource.details}" foi concluída!!`,
-      });
+      // await LogModel.create({
+      //   user: req.currentUser._id,
+      //   resource: idResource,
+      //   status: `A edição "${resource.details}" foi concluída!!`,
+      // });
 
       return res.status(200).json(resource);
     } catch (error) {
@@ -232,7 +224,7 @@ resourceRoute.put(
 //all-resource (incluir para avaliação do grupo- 15h41)
 resourceRoute.get("/all-resource", async (req, res) => {
   try {
-    const allResource = await ResourceModel.find({});
+    const allResource = await ResourceModel.find({}).populate("gestor");
     console.log(allResource);
 
     return res.status(200).json(allResource);
