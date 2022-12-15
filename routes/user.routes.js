@@ -61,7 +61,10 @@ userRouter.post("/signup", async (req, res) => {
 
     //envio do email
 
+
     //await transporter.sendMail(mailOptions);
+
+
 
     return res.status(201).json(createdUser);
   } catch (error) {

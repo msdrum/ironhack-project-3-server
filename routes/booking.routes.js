@@ -126,13 +126,13 @@ bookingRoute.post(
 
 //MINHAS RESERVAS --> reservas do usuario
 bookingRoute.get(
-  "/my-bookings/:userId",
+  "/my-bookings",
   isAuth, attachCurrentUser, async (req, res) => {
     try {
-      const { userId } = req.params;
+      //const { userId } = req.params;
 
       const myBookings = await BookingModel.find({
-        user: new ObjectId(userId),
+        user: new ObjectId(req.currentUser._id),
       })
         .populate("user")
         .populate("resource");
@@ -153,12 +153,12 @@ bookingRoute.get(
 
 //Reservas dos recursos do gestor
 bookingRoute.get(
-  "/gestor-bookings/:gestorId",
+  "/gestor-bookings",
   isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
-      const { gestorId } = req.params;
+      //const { gestorId } = req.params;
 
-      const bookings = await BookingModel.find({ gestor: gestorId }).populate("gestor");
+      const bookings = await BookingModel.find({ gestor: req.currentUser._id }).populate("gestor");
       console.log(bookings);
 
       if (!bookings) {
