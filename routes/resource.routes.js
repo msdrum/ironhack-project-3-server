@@ -24,15 +24,15 @@ resourceRoute.post(
         gestor: req.currentUser._id,
       });
 
-      // const userUpdated = await UserModel.findByIdAndUpdate(
-      //   req.currentUser._id,
-      //   {
-      //     $push: {
-      //       resources: newResource._id,
-      //     },
-      //   },
-      //   { new: true, runValidators: true }
-      // );
+      const userUpdated = await UserModel.findByIdAndUpdate(
+        req.currentUser._id,
+        {
+          $push: {
+            resources: newResource._id,
+          },
+        },
+        { new: true, runValidators: true }
+      );
       // await BookingModel.create({
       //   user: req.currentUser._id,
       //   resource: newResource._id,
@@ -127,8 +127,8 @@ resourceRoute.put(
 resourceRoute.delete(
   "/delete/:idResource",
   isAuth,
-  isGestor,
   attachCurrentUser,
+  isGestor,
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -136,12 +136,16 @@ resourceRoute.delete(
       //deletei o recurso
       const deletedResource = await ResourceModel.findByIdAndDelete(idResource);
 
-      //retirei o id do recurso de dentro da minha array recurso
+      if (!deletedResource) {
+        return res.status(400).json({ msg: "Recurso não encontrado!" });
+      }
+
+      //retirando o id do recurso de dentro da array resources do UserModel.
       await UserModel.findByIdAndUpdate(
-        deletedResource.user,
+        deletedResource.gestor,
         {
           $pull: {
-            Resources: idResource,
+            resources: idResource,
           },
         },
         { new: true, runValidators: true }
