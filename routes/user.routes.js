@@ -125,9 +125,19 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-userRouter.get(
-  "/all-users",
-  /*isAuth, isGestor,*/ async (req, res) => {
+userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.currentUser._id).populate("resources").populate("booking")
+
+
+    return res.status(200).json(req.currentUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.errors);
+  }
+});
+
+userRouter.get("/all-users", /*isAuth, isGestor,*/ async (req, res) => {
     try {
       const users = await UserModel.find({}, { passwordHash: 0 });
 
@@ -186,13 +196,13 @@ userRouter.delete("/delete/:id", async (req, res) => {
       return res.status(400).json({ msg: "Usuário não encontrado!" });
     }
 
-    if (ResourceModel.find({ gestor: id })) {
-      return res
-        .status(403)
-        .json({
-          msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
-        });
-    }
+    //if ((await ResourceModel.find({ gestor: id })).length) {
+    //  return res
+    //    .status(403)
+    //    .json({
+    //      msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
+    //    });
+    //}
 
     await BookingModel.deleteMany({ user: id });
 
