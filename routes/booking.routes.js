@@ -26,16 +26,19 @@ bookingRoute.post(
 
 //ROTA DA DISPONIBILIDADE DE HORÁRIOS DO RECURSO
 
-bookingRoute.get(
+bookingRoute.post(
   "/availability",
   /*isAuth, attachCurrentUser,*/ async (req, res) => {
     try {
-      //arrumando a data consultada, vinda do front (ex: 14-12-2022)
+      console.log("body recebido:", req.body);
+      if (!req.body) return ("Body nao recebido");
+
+      //arrumando a data consultada, vinda do front (ex: 2022-12-14)
       const dateFront = req.body.schedule;
       const dateArray = dateFront.split("-");
-      const day = +dateArray[0];
+      const day = +dateArray[2];
       const month = +dateArray[1] - 1; //-> mes começa com 0
-      const year = +dateArray[2];
+      const year = +dateArray[0];
 
       //criando objeto do tipo Date
       const date = new Date(year, month, day);
@@ -46,8 +49,7 @@ bookingRoute.get(
       (13/12/2022) --> 2 terça
       (14/12/2022) --> 3 quarta
       (15/12/2022) --> 4 quinta
-      (16/12/2022) --> 5 sexta
-    */
+      (16/12/2022) --> 5 sexta    */
       const week = date.getDay();
       console.log(week, typeof week);
 
@@ -59,7 +61,7 @@ bookingRoute.get(
        * Resource - encontrando pelo ID do resource
        */
       const resource = req.body.resource;
-      console.log(resource);
+      //console.log(resource);
 
       const resourceToBook = await ResourceModel.findById(resource).populate(
         "gestor"
