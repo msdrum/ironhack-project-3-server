@@ -111,9 +111,9 @@ resourceRoute.post(
 
 resourceRoute.get(
   "/my-resource",
-  /* isAuth,
+  isAuth,
   isGestor,
-  attachCurrentUser,*/
+  attachCurrentUser,
   async (req, res) => {
     try {
       const allResource = await ResourceModel.find({
@@ -132,9 +132,9 @@ resourceRoute.get(
 
 resourceRoute.put(
   "/edit/:idResource",
-  /*isAuth,
+  isAuth,
   isGestor,
-  attachCurrentUser,*/
+  attachCurrentUser,
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -144,7 +144,6 @@ resourceRoute.put(
         { ...req.body },
         { new: true, runValidators: true }
       );
-
 
       return res.status(200).json(updatedResource);
     } catch (error) {
@@ -158,9 +157,9 @@ resourceRoute.put(
 
 resourceRoute.delete(
   "/delete/:idResource",
-  /*isAuth,
+  isAuth,
   isGestor,
-  attachCurrentUser,*/
+  attachCurrentUser,
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -179,8 +178,6 @@ resourceRoute.delete(
         { new: true, runValidators: true }
       );
 
-      
-
       return res.status(200).json(deletedResource);
     } catch (error) {
       console.log(error);
@@ -193,9 +190,9 @@ resourceRoute.delete(
 
 resourceRoute.put(
   "/edit/:idResource",
-  /*isAuth,
+  isAuth,
   isGestor,
-  attachCurrentUser,*/
+  attachCurrentUser,
   async (req, res) => {
     try {
       const { idResource } = req.params;
