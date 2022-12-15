@@ -48,19 +48,19 @@ userRouter.post("/signup", async (req, res) => {
 
     delete createdUser._doc.passwordHash;
 
-    //const mailOptions = {
-    //  from: "turma92wd@hotmail.com", //nosso email
-    //  to: email, //o email do usuário
-    //  subject: "Ativação de Conta",
-    //  html: `
-    //    <h1>Bem vindo ao nosso site.</h1>
-    //    <p>Por favor, confirme seu email clicando no link abaixo.</p>
-    //    <a href=http://localhost:8080/user/activate-account/${createdUser._id}>ATIVE SUA CONTA</a>
-    //  `,
-    //};
+    const mailOptions = {
+      from: "turma92wd@hotmail.com", //nosso email
+      to: email, //o email do usuário
+      subject: "Ativação de Conta no reservagov",
+      html: `
+        <h1>Bem vindo ao incrível mundo da reserva de recursos governamentais!</h1>
+        <p>Por favor, confirme seu email clicando no link abaixo.</p>
+        <a href=http://localhost:8080/user/activate-account/${createdUser._id}>ATIVE SUA CONTA</a>
+      `,
+    };
 
     //envio do email
-    //await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 
     return res.status(201).json(createdUser);
   } catch (error) {
