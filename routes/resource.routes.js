@@ -80,16 +80,16 @@ resourceRoute.post("/create-resource-teste/:userId", async (req, res) => {
 //GET my-resources (gestor) --> rota para listar todos os recursos de um determinado gestor --> listando pelo nome do recurso.
 
 resourceRoute.get(
-  "/my-resources",
+  "/all-resources",
   isAuth,
   attachCurrentUser,
   async (req, res) => {
     try {
-      const allMyResources = await ResourceModel.find({
+      const allResources = await ResourceModel.find({
         user: req.currentUser._id,
       }).populate("name");
 
-      return res.status(200).json(allMyResources);
+      return res.status(200).json(allResources);
     } catch (error) {
       console.log(error);
       return res.status(400).json(error.errors);
