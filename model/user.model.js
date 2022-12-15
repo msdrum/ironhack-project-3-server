@@ -46,6 +46,11 @@ const userSchema = new Schema(
       { type: Schema.Types.ObjectId, 
         ref: "Booking" },
     ] ,
+
+    passwordHash: {
+      type: String,
+      required: true
+    }
   },
   {
     timestamps: true, strict: true

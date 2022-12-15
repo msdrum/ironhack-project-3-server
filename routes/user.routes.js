@@ -196,13 +196,13 @@ userRouter.delete("/delete/:id", async (req, res) => {
       return res.status(400).json({ msg: "Usuário não encontrado!" });
     }
 
-    if (ResourceModel.find({ gestor: id })) {
-      return res
-        .status(403)
-        .json({
-          msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
-        });
-    }
+    //if ((await ResourceModel.find({ gestor: id })).length) {
+    //  return res
+    //    .status(403)
+    //    .json({
+    //      msg: "Usuário não pode ser deletado. Redistribuir recursos atribuidos.",
+    //    });
+    //}
 
     await BookingModel.deleteMany({ user: id });
 
