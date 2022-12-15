@@ -145,11 +145,6 @@ resourceRoute.put(
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        user: req.currentUser._id,
-        Resource: idResource,
-        status: `O recurso  "${updatedResource.details}" foi atualizado.`,
-      });
 
       return res.status(200).json(updatedResource);
     } catch (error) {
@@ -184,11 +179,7 @@ resourceRoute.delete(
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        Resource: idResource,
-        user: req.currentUser._id,
-        status: `O recurso "${deletedResource.details}" foi excluída com o status ${deletedResource.status}.`,
-      });
+      
 
       return res.status(200).json(deletedResource);
     } catch (error) {
