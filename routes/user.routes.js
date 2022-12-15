@@ -94,6 +94,8 @@ userRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log(email, password);
+
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
@@ -131,8 +133,9 @@ userRouter.post("/login", async (req, res) => {
 
 userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const user = await UserModel.findById(req.currentUser._id).populate("resources").populate("booking")
-
+    const user = await UserModel.findById(req.currentUser._id)
+      .populate("resources")
+      .populate("booking");
 
     return res.status(200).json(req.currentUser);
   } catch (error) {
@@ -141,7 +144,12 @@ userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, res) => {
+userRouter.get(
+  "/all-users",
+  isAuth,
+  attachCurrentUser,
+  isGestor,
+  async (req, res) => {
     try {
       const users = await UserModel.find({}, { passwordHash: 0 });
 
@@ -153,25 +161,22 @@ userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, re
   }
 );
 
-userRouter.put(
-  "/edit-any/:id",
-  isAuth, isGestor, async (req, res) => {
-    try {
-      const { id } = req.params;
+userRouter.put("/edit-any/:id", isAuth, isGestor, async (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const updatedUser = await UserModel.findByIdAndUpdate(
-        id,
-        { ...req.body },
-        { new: true, runValidators: true }
-      );
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      id,
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
 
-      return res.status(200).json(updatedUser);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error.errors);
-    }
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.errors);
   }
-);
+});
 
 userRouter.put("/edit", isAuth, attachCurrentUser, async (req, res) => {
   try {
