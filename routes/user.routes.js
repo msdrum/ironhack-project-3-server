@@ -137,7 +137,7 @@ userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-userRouter.get("/all-users", /*isAuth, isGestor,*/ async (req, res) => {
+userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
       const users = await UserModel.find({}, { passwordHash: 0 });
 
@@ -151,7 +151,7 @@ userRouter.get("/all-users", /*isAuth, isGestor,*/ async (req, res) => {
 
 userRouter.put(
   "/edit-any/:id",
-  /*isAuth, isGestor,*/ async (req, res) => {
+  isAuth, isGestor, async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -169,7 +169,7 @@ userRouter.put(
   }
 );
 
-userRouter.put("/edit", /*isAuth,*/ attachCurrentUser, async (req, res) => {
+userRouter.put("/edit", isAuth, attachCurrentUser, async (req, res) => {
   try {
     //quem é o usuário? -> req.currentUser
 
