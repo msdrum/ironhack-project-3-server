@@ -192,7 +192,7 @@ resourceRoute.delete(
 //editar-resource
 
 resourceRoute.put(
-  "/complete/:idResource",
+  "/edit/:idResource",
   /*isAuth,
   isGestor,
   attachCurrentUser,*/
@@ -202,15 +202,16 @@ resourceRoute.put(
 
       const resource = await ResourceModel.findByIdAndUpdate(
         idResource,
-        { complete: true, dateFin: Date.now() },
+        // { complete: true, dateFin: Date.now() },
+        { ...req.body },
         { new: true, runValidators: true }
       );
 
-      await LogModel.create({
-        user: req.currentUser._id,
-        resource: idResource,
-        status: `A edição "${resource.details}" foi concluída!!`,
-      });
+      // await LogModel.create({
+      //   user: req.currentUser._id,
+      //   resource: idResource,
+      //   status: `A edição "${resource.details}" foi concluída!!`,
+      // });
 
       return res.status(200).json(resource);
     } catch (error) {
