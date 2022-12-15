@@ -97,13 +97,13 @@ resourceRoute.get(
   }
 );
 
-//update-resource
+//PUT edit --> rota para o gestor editar o recurso pelo Id do recurso.
 
 resourceRoute.put(
   "/edit/:idResource",
   isAuth,
-  isGestor,
   attachCurrentUser,
+  isGestor,
   async (req, res) => {
     try {
       const { idResource } = req.params;
