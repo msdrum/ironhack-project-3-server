@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
 
 userRouter.post("/signup", async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, email } = req.body;
 
     if (
       !password ||
@@ -49,7 +49,7 @@ userRouter.post("/signup", async (req, res) => {
     delete createdUser._doc.passwordHash;
 
     const mailOptions = {
-      from: "turma92wd@hotmail.com", //nosso email
+      from: "reservasgov-do-not-reply@hotmail.com", //nosso email
       to: email, //o email do usuário
       subject: "Ativação de Conta no reservagov",
       html: `
@@ -206,7 +206,7 @@ userRouter.delete("/delete/:id", async (req, res) => {
 
     await BookingModel.deleteMany({ user: id });
 
-    return res.status(200).json(users);
+    return res.status(200).json(deletedUser);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error.errors);
