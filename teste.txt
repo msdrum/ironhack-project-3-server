@@ -146,3 +146,5 @@ BOOKINGS
   "schedule": "15-12-2022-14:00",
   "status": "Pendente"
 }]
+
+MONGODB_URI=mongodb+srv://reservasgov:hix2WqWU5h4pslrO@cluster0.kz4ekks.mongodb.net/?retryWrites=true&w=majority
