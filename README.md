@@ -36,7 +36,31 @@ DELETE /users/profile/disable-account
 ```
 PATCH /users/profile/active-account
 ```
-
+## :rocket:Rotas de Negócios
+<b> Crio:
+```
+POST /business/create-business
+```
+<b> Obter negócios atuais por ID
+```
+GET /business/profile/:id
+```
+<b>Atualizar negócios
+```
+PATCH /business/update/:id
+```
+<b> Excluir empresa
+```
+PATCH /users/profile/update
+```
+<b> Deletar conta:
+```
+DELETE /business/:idBusiness/disable-business
+```
+<b> Negócios ativos
+```
+PATCH /business/:idBusiness/active-business
+```
 
 ## :dart: Status do projeto
 O projeto está funcionando
