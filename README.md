@@ -36,34 +36,27 @@ DELETE /users/profile/disable-account
 ```
 PATCH /users/profile/active-account
 ```
-## :rocket:Rotas de Negócios
+## :rocket:Rotas do Booking
 <b> Crio:
 ```
-POST /business/create-business
+POST /booking/create-booking
 ```
-<b> Obter negócios atuais por ID
+<b> Obter reservas por ID
 ```
-GET /business/profile/:id
+GET /booking/profile/:id
 ```
-<b>Atualizar negócios
+<b>Atualizar Booking
 ```
-PATCH /business/update/:id
+PATCH /booking/update/:id
 ```
-<b> Excluir empresa
+<b> Excluir resevar no booking
 ```
 PATCH /users/profile/update
 ```
-<b> Deletar conta:
+<b> Deletar reserva:
 ```
-DELETE /business/:idBusiness/disable-business
+DELETE /delete/:bookingId
 ```
-<b> Negócios ativos
-```
-PATCH /business/:idBusiness/active-business
-```
-
-## :dart: Status do projeto
-O projeto está funcionando
 
 ## :rocket: Desenvolvedores GitHub
 * <b> AnaAleixo
