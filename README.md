@@ -32,9 +32,6 @@ PUT /user/edit
 ```
 DELETE: /user/delete/id
 ```
-<b> Conta ativa:
-```
-PATCH /users/profile/active-account
 ```
 ## :rocket:Rotas do Booking
 <b> Crio:
