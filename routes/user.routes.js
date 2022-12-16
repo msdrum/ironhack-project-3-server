@@ -8,8 +8,9 @@ import isGestor from "../middlewares/isGestor.js";
 import UserModel from "../model/user.model.js";
 import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
+import * as dotenv from 'dotenv';
 
-const saltRounds = 10;
+dotenv.config()
 
 const userRouter = express.Router();
 
@@ -37,7 +38,7 @@ userRouter.post("/signup", async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(saltRounds);
+    const salt = await bcrypt.genSalt(10);
 
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -49,7 +50,7 @@ userRouter.post("/signup", async (req, res) => {
     delete createdUser._doc.passwordHash;
 
     const mailOptions = {
-      from: "reservasgov-do-not-reply@hotmail.com", //nosso email
+      from: "reservasgov@hotmail.com", //nosso email
       to: email, //o email do usuário
       subject: "Ativação de Conta no reservagov",
       html: `
@@ -60,7 +61,11 @@ userRouter.post("/signup", async (req, res) => {
     };
 
     //envio do email
-    //await transporter.sendMail(mailOptions);
+
+    await transporter.sendMail(mailOptions);
+
+
+
 
     return res.status(201).json(createdUser);
   } catch (error) {
@@ -90,6 +95,8 @@ userRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log(email, password);
+
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
@@ -99,7 +106,7 @@ userRouter.post("/login", async (req, res) => {
     if (user.confirmEmail === false) {
       return res
         .status(401)
-        .json({ msg: "Usuário não confirmado. Por favor validar email." });
+       .json({ msg: "Usuário não confirmado. Por favor validar email." });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
@@ -127,8 +134,9 @@ userRouter.post("/login", async (req, res) => {
 
 userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const user = await UserModel.findById(req.currentUser._id).populate("resources").populate("booking")
-
+    const user = await UserModel.findById(req.currentUser._id)
+      .populate("resources")
+      .populate("booking");
 
     return res.status(200).json(req.currentUser);
   } catch (error) {
@@ -137,7 +145,12 @@ userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, res) => {
+userRouter.get(
+  "/all-users",
+  isAuth,
+  attachCurrentUser,
+  isGestor,
+  async (req, res) => {
     try {
       const users = await UserModel.find({}, { passwordHash: 0 });
 
@@ -151,23 +164,23 @@ userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, re
 
 userRouter.put(
   "/edit-any/:id",
-  isAuth, isGestor, async (req, res) => {
+  isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
       const { id } = req.params;
 
-      const updatedUser = await UserModel.findByIdAndUpdate(
-        id,
-        { ...req.body },
-        { new: true, runValidators: true }
-      );
 
-      return res.status(200).json(updatedUser);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error.errors);
-    }
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      id,
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.errors);
   }
-);
+});
 
 userRouter.put("/edit", isAuth, attachCurrentUser, async (req, res) => {
   try {
