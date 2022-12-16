@@ -13,39 +13,34 @@ const resourceRoute = express.Router();
 //POST create-resource
 
 resourceRoute.post(
-  "/create-resource",
-  isAuth,
-  attachCurrentUser,
-  isGestor,
-  async (req, res) => {
-    try {
-      const newResource = await ResourceModel.create({
-        ...req.body,
-        gestor: req.currentUser._id,
-      });
+   "/create-resource",
+   isAuth, attachCurrentUser, async (req, res) => {
+     try {
+        const newResource = await ResourceModel.create({
+         ...req.body,
+         gestor: req.currentUser._id,
+        });
 
-      const userUpdated = await UserModel.findByIdAndUpdate(
-        req.currentUser._id,
-        {
-          $push: {
-            resources: newResource._id,
-          },
+        const userUpdated = await UserModel.findByIdAndUpdate(
+          req.currentUser._id,
+          {
+            $push: {
+              resources: newResource._id,
+            },
         },
-        { new: true, runValidators: true }
-      );
-      // await BookingModel.create({
-      //   user: req.currentUser._id,
-      //   resource: newResource._id,
-      //   status: "Pendente", //rever o status
-      // });
+         { new: true, runValidators: true }
+       );
 
-      return res.status(201).json(newResource);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error.errors);
-    }
-  }
-);
+
+       return res.status(201).json(newResource);
+      } catch (error) {
+       console.log(error);
+        return res.status(500).json(error.errors);
+     }
+   }
+  );
+
+
 
 //ROTA TESTE criar um novo Resource e alocá-lo para um gestor.
 
