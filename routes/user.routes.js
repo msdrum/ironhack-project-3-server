@@ -8,8 +8,9 @@ import isGestor from "../middlewares/isGestor.js";
 import UserModel from "../model/user.model.js";
 import BookingModel from "../model/booking.model.js";
 import ResourceModel from "../model/resource.model.js";
+import * as dotenv from 'dotenv';
 
-const saltRounds = 10;
+dotenv.config()
 
 const userRouter = express.Router();
 
@@ -37,7 +38,7 @@ userRouter.post("/signup", async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(saltRounds);
+    const salt = await bcrypt.genSalt(10);
 
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -49,7 +50,7 @@ userRouter.post("/signup", async (req, res) => {
     delete createdUser._doc.passwordHash;
 
     const mailOptions = {
-      from: "reservasgov-do-not-reply@hotmail.com", //nosso email
+      from: "reservasgov@hotmail.com", //nosso email
       to: email, //o email do usuário
       subject: "Ativação de Conta no reservagov",
       html: `
@@ -60,7 +61,7 @@ userRouter.post("/signup", async (req, res) => {
     };
 
     //envio do email
-    //await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 
     return res.status(201).json(createdUser);
   } catch (error) {
@@ -99,7 +100,7 @@ userRouter.post("/login", async (req, res) => {
     if (user.confirmEmail === false) {
       return res
         .status(401)
-        .json({ msg: "Usuário não confirmado. Por favor validar email." });
+       .json({ msg: "Usuário não confirmado. Por favor validar email." });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
@@ -151,7 +152,7 @@ userRouter.get("/all-users", isAuth, attachCurrentUser, isGestor, async (req, re
 
 userRouter.put(
   "/edit-any/:id",
-  isAuth, isGestor, async (req, res) => {
+  isAuth, attachCurrentUser, isGestor, async (req, res) => {
     try {
       const { id } = req.params;
 
