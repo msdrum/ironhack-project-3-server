@@ -12,25 +12,25 @@ Projeto desenvolvido como didática de bak-end para a turma Bootcamp Web Dev T2
 * Funcionalidade CRUD completa
 
 ## :rocket:Rotas do Usuário
-<b> Crio:
+<b> Criar Usuário:
 ```
-POST /users/create-user
+POST /user/signup
 ```
-<b> Conecte-se:
+<b> Conectar usuário:
 ```
-POST /users/login
+POST /user/login
 ```
-<b> Obter usuário atual:
+<b> Perfil do usuário:
 ```
-GET /users/profile
+GET /user/profile
 ```
-<b> Atualizar conta:
+<b> Editar usuário:
 ```
-PATCH /users/profile/update
+PUT /user/edit
 ```
-<b> Deletar conta:
+<b> Deletar usuário:
 ```
-DELETE /users/profile/disable-account
+DELETE: /user/delete/id
 ```
 <b> Conta ativa:
 ```
