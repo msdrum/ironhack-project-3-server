@@ -103,11 +103,11 @@ userRouter.post("/login", async (req, res) => {
       return res.status(404).json({ msg: "Email invalido." });
     }
 
-    if (user.confirmEmail === false) {
-      return res
-        .status(401)
-       .json({ msg: "Usuário não confirmado. Por favor validar email." });
-    }
+    //if (user.confirmEmail === false) {
+    //  return res
+    //    .status(401)
+    //   .json({ msg: "Usuário não confirmado. Por favor validar email." });
+    //}
 
     if (await bcrypt.compare(password, user.passwordHash)) {
       delete user._doc.passwordHash;
