@@ -32,7 +32,6 @@ PUT /user/edit
 ```
 DELETE: /user/delete/id
 ```
-```
 ## :rocket:Rotas do Booking
 <b> Crio:
 ```
