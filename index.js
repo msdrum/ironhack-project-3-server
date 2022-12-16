@@ -12,7 +12,7 @@ dotenv.config();
 //instanciar a variável que vai ficar responsável pelo nosso servidor -> app
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.REACT_URL }));
 
 //configurar o servidor para aceitar enviar e receber arquivos em JSON
 app.use(express.json());
