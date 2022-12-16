@@ -38,25 +38,37 @@ DELETE: /user/delete/id
 POST /resource/create-resource
 ```
 ## :rocket:Rotas do Booking
-<b> Crio:
+<b> Criar Agendamento:
 ```
-POST /booking/create-booking
+POST /booking/new
 ```
-<b> Obter reservas por ID
+<b> Obter disponibilidade de horários para agendamento:
 ```
-GET /booking/profile/:id
+POST /booking/availability
 ```
-<b>Atualizar Booking
+<b>Obter reservas do usuário:
 ```
-PATCH /booking/update/:id
+GET /booking/my-bookings
 ```
-<b> Excluir resevar no booking
+<b> Reservas de recursos do gestor:
 ```
-PATCH /users/profile/update
+GET /booking/gestor-bookings
 ```
-<b> Deletar reserva:
+<b> Editar reserva:
 ```
-DELETE /delete/:bookingId
+PUT /booking/edit/:bookingId
+```
+<b> Aprovar reserva:
+```
+PUT /booking/aprove/:bookingId
+```
+<b> Cancelar reserva:
+```
+DELETE /booking/delete/:bookingId
+```
+<b> Verificar todas as reserva:
+```
+GET /booking/all
 ```
 
 ## :rocket: Desenvolvedores GitHub
