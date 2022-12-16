@@ -73,9 +73,9 @@ GET /booking/all
 
 ## :rocket: Desenvolvedores GitHub
 
-* <b> [Márcio Silva](https://github.com/msdrum)
-* <b> AnaAleixo
-* <b> Vitor Martins
-* <b> Rodrigo Sotolani
-* <b> karen Ortiz
+* <b> [Marcio Silva](https://github.com/msdrum)
+* <b> [Vitor Martins](https://github.com/cmsvtr)
+* <b> [Rodrigo Sotolani](https://github.com/rsotolani)
+* <b> [karen Ortiz](https://github.com/kaluize)
+* <b> [Ana Aleixo](https://github.com/AnaAleixo)
   
