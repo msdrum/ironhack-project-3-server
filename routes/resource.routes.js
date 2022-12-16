@@ -12,41 +12,44 @@ const resourceRoute = express.Router();
 
 //POST create-resource
 
-//  resourceRoute.post(
-//   "/create-resource",
-//   isAuth, attachCurrentUser, async (req, res) => {
-//     try {
-//        const newResource = await ResourceModel.create({
-//         ...req.body,
-//         gestor: req.currentUser._id,
-//        });
+resourceRoute.post(
+  "/create-resource",
+  isAuth,
+  attachCurrentUser,
+  isGestor,
+  async (req, res) => {
+    try {
+      const newResource = await ResourceModel.create({
+        ...req.body,
+        gestor: req.currentUser._id,
+      });
 
-//        const userUpdated = await UserModel.findByIdAndUpdate(
-//          req.currentUser._id,
-//          {
-//            $push: {
-//              resources: newResource._id,
-//            },
-//        },
-//         { new: true, runValidators: true }
-//       );
-//        await BookingsModel.create({
-//         user: req.currentUser._id,
-//         resource: newResource._id,
-//         status: "Pendente", //rever o status
-//       });
+      const userUpdated = await UserModel.findByIdAndUpdate(
+        req.currentUser._id,
+        {
+          $push: {
+            resources: newResource._id,
+          },
+        },
+        { new: true, runValidators: true }
+      );
+      // await BookingModel.create({
+      //   user: req.currentUser._id,
+      //   resource: newResource._id,
+      //   status: "Pendente", //rever o status
+      // });
 
-//       return res.status(201).json(newResource);
-//      } catch (error) {
-//       console.log(error);
-//        return res.status(500).json(error.errors);
-//     }
-//   }
-//  );
+      return res.status(201).json(newResource);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.errors);
+    }
+  }
+);
 
 //ROTA TESTE criar um novo Resource e alocá-lo para um gestor.
 
-resourceRoute.post("/create-resource/:userId", async (req, res) => {
+resourceRoute.post("/create-resource-teste/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -73,54 +76,20 @@ resourceRoute.post("/create-resource/:userId", async (req, res) => {
     return res.status(500).json(error.erros);
   }
 });
-/*
-// Criar Recursos (incluir para avaliação do grupo- 15h41)
-resourceRoute.post(
-  "/create-resource",
-/*isAuth, isGestor,
- attachCurrentUser,
-  async (req, res) => {
-    try {
-      const newResource = await ResourceModel.create({
-        ...req.body,
-        gestor: req.currentGestor._id,
-      });
 
-      const userUpdated = await UserModel.findByIdAndUpdate(
-        req.currentUser._id,{
-          $push: {
-            resource: newResource._id,
-          },
-        },
-        { new: true, runValidators: true });
-
-      await LogModel.create({
-        user: req.currentUser._id,
-        resource: newResource._id,
-        status: "Um novo recurso foi adicionado",});
-
-      return res.status(201).json(newResource);
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json(error.errors);
-    }
-  }
-);
-*/
-//get all-resource
+//GET my-resources (gestor) --> rota para listar todos os recursos de um determinado gestor --> listando pelo nome do recurso.
 
 resourceRoute.get(
-  "/my-resource",
+  "/my-resources",
   isAuth,
-  isGestor,
   attachCurrentUser,
   async (req, res) => {
     try {
-      const allResource = await ResourceModel.find({
+      const allMyResources = await ResourceModel.find({
         user: req.currentUser._id,
-      }).populate("gestor");
+      }).populate("name");
 
-      return res.status(200).json(allResource);
+      return res.status(200).json(allMyResources);
     } catch (error) {
       console.log(error);
       return res.status(400).json(error.errors);
@@ -128,13 +97,13 @@ resourceRoute.get(
   }
 );
 
-//update-resource
+//PUT edit --> rota para o gestor editar o recurso pelo Id do recurso.
 
 resourceRoute.put(
   "/edit/:idResource",
   isAuth,
-  isGestor,
   attachCurrentUser,
+  isGestor,
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -158,8 +127,8 @@ resourceRoute.put(
 resourceRoute.delete(
   "/delete/:idResource",
   isAuth,
-  isGestor,
   attachCurrentUser,
+  isGestor,
   async (req, res) => {
     try {
       const { idResource } = req.params;
@@ -167,12 +136,16 @@ resourceRoute.delete(
       //deletei o recurso
       const deletedResource = await ResourceModel.findByIdAndDelete(idResource);
 
-      //retirei o id do recurso de dentro da minha array recurso
+      if (!deletedResource) {
+        return res.status(400).json({ msg: "Recurso não encontrado!" });
+      }
+
+      //retirando o id do recurso de dentro da array resources do UserModel.
       await UserModel.findByIdAndUpdate(
-        deletedResource.user,
+        deletedResource.gestor,
         {
           $pull: {
-            Resources: idResource,
+            resources: idResource,
           },
         },
         { new: true, runValidators: true }
