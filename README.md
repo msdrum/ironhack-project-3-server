@@ -32,6 +32,11 @@ PUT /user/edit
 ```
 DELETE: /user/delete/id
 ```
+## :rocket:Rotas dos Recursos
+<b> Criar Recurso:
+```
+POST /resource/create-resource
+```
 ## :rocket:Rotas do Booking
 <b> Crio:
 ```
