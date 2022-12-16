@@ -164,7 +164,7 @@ userRouter.get(
 
 userRouter.put(
   "/edit-any/:id",
-  isAuth, attachCurrentUser, isGestor, async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       const { id } = req.params;
 
