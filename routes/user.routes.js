@@ -62,7 +62,7 @@ userRouter.post("/signup", async (req, res) => {
 
     //envio do email
 
-    await transporter.sendMail(mailOptions);
+    //await transporter.sendMail(mailOptions);
 
 
 
@@ -103,11 +103,11 @@ userRouter.post("/login", async (req, res) => {
       return res.status(404).json({ msg: "Email invalido." });
     }
 
-    if (user.confirmEmail === false) {
-      return res
-        .status(401)
-       .json({ msg: "Usuário não confirmado. Por favor validar email." });
-    }
+    //if (user.confirmEmail === false) {
+    //  return res
+    //    .status(401)
+    //   .json({ msg: "Usuário não confirmado. Por favor validar email." });
+    //}
 
     if (await bcrypt.compare(password, user.passwordHash)) {
       delete user._doc.passwordHash;
@@ -164,7 +164,7 @@ userRouter.get(
 
 userRouter.put(
   "/edit-any/:id",
-  isAuth, attachCurrentUser, isGestor, async (req, res) => {
+  isAuth, attachCurrentUser, async (req, res) => {
     try {
       const { id } = req.params;
 
