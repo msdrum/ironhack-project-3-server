@@ -135,7 +135,8 @@ bookingRoute.get(
         user: new ObjectId(req.currentUser._id),
       })
         .populate("user")
-        .populate("resource");
+        .populate("resource")
+        .populate("gestor");
 
       if (!myBookings) {
         return res
@@ -158,7 +159,11 @@ bookingRoute.get(
     try {
       //const { gestorId } = req.params;
 
-      const bookings = await BookingModel.find({ gestor: req.currentUser._id }).populate("gestor");
+      const bookings = await BookingModel.find({ 
+        gestor: req.currentUser._id })
+        .populate("user")
+        .populate("resource")
+        .populate("gestor");
       console.log(bookings);
 
       if (!bookings) {
